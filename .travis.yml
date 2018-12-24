@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - '8'
+install:
+  - npm install
+script:
+  - npm run build-storybook
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: docs
+  on:
+    branch: master
