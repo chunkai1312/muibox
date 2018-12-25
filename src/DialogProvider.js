@@ -6,26 +6,32 @@ import DialogContext from './DialogContext'
 
 class DialogProvider extends React.PureComponent {
   state = {
-    alertDialog: { open: false },
-    confirmDialog: { open: false },
-    promptDialog: { open: false }
+    alertDialog: null,
+    confirmDialog: null,
+    promptDialog: null
   }
 
   handleAlertDialogClose = (value) => {
     const { alertDialog } = this.state
-    this.setState({ alertDialog: { ...alertDialog, open: false } })
+    this.setState({ alertDialog: { ...alertDialog, open: false } }, () => {
+      this.setState({ alertDialog: null })
+    })
     return alertDialog.resolve(value)
   }
 
   handleConfirmDialogClose = (value) => {
     const { confirmDialog } = this.state
-    this.setState({ confirmDialog: { ...confirmDialog, open: false } })
+    this.setState({ confirmDialog: { ...confirmDialog, open: false } }, () => {
+      this.setState({ confirmDialog: null })
+    })
     return value ? confirmDialog.resolve(value) : confirmDialog.reject()
   }
 
   handlePromptDialogClose = (value) => {
     const { promptDialog } = this.state
-    this.setState({ promptDialog: { ...promptDialog, open: false } })
+    this.setState({ promptDialog: { ...promptDialog, open: false } }, () => {
+      this.setState({ promptDialog: null })
+    })
     return value ? promptDialog.resolve(value) : promptDialog.reject()
   }
 
@@ -48,15 +54,15 @@ class DialogProvider extends React.PureComponent {
   }
 
   render () {
-    const { children, pages, match } = this.props // eslint-disable-line
+    const { children } = this.props
     const { alertDialog, confirmDialog, promptDialog } = this.state
     const dialog = { alert: this.alert, confirm: this.confirm, prompt: this.prompt }
     return (
       <DialogContext.Provider value={{ dialog }}>
         {children}
-        <AlertDialog {...alertDialog} open={alertDialog.open} onClose={this.handleAlertDialogClose} />
-        <ConfirmDialog {...confirmDialog} open={confirmDialog.open} onClose={this.handleConfirmDialogClose} />
-        <PromptDialog {...promptDialog} open={promptDialog.open} onClose={this.handlePromptDialogClose} />
+        {alertDialog && <AlertDialog {...alertDialog} open={alertDialog.open} onClose={this.handleAlertDialogClose} />}
+        {confirmDialog && <ConfirmDialog {...confirmDialog} open={confirmDialog.open} onClose={this.handleConfirmDialogClose} />}
+        {promptDialog && <PromptDialog {...promptDialog} open={promptDialog.open} onClose={this.handlePromptDialogClose} />}
       </DialogContext.Provider>
     )
   }

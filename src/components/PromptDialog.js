@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { compose, withStateHandlers } from 'recompose'
+import withStateHandlers from 'recompose/withStateHandlers'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -10,24 +10,31 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 function PromptDialog (props, context) {
-  const { open, onClose, title, message, ok, cancel, label, value, defaultValue, handleChange } = props
+  const { open, onClose, title, message, ok, cancel, required, defaultValue, value, handleChange } = props
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose(null)}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog
+      fullWidth
+      open={open}
+      onClose={() => onClose(null)}
+      aria-labelledby="prompt-dialog-title"
+      aria-describedby="prompt-dialog-message"
+    >
+      <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        <DialogContentText id="prompt-dialog-message">{message}</DialogContentText>
         <TextField
-          label={label}
+          id="prompt-dialog-text-field"
           onChange={handleChange}
-          margin="dense"
-          autoFocus
-          fullWidth
           defaultValue={defaultValue}
+          required
+          margin="dense"
+          fullWidth
+          autoFocus
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(null)} color="primary">{cancel}</Button>
-        <Button onClick={() => onClose(value)} color="primary">{ok}</Button>
+        <Button onClick={() => onClose(value)} color="primary" disabled={required && !value}>{ok}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -40,23 +47,21 @@ PromptDialog.propTypes = {
   message: PropTypes.node,
   ok: PropTypes.string,
   cancel: PropTypes.string,
-  label: PropTypes.string,
+  required: PropTypes.bool,
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   value: PropTypes.string,
-  defaultValue: PropTypes.string,
   handleChange: PropTypes.func.isRequired
 }
 
 PromptDialog.defaultProps = {
-  title: '',
   open: false,
-  ok: 'ok',
-  cancel: 'cancel'
+  title: '',
+  ok: 'OK',
+  cancel: 'Cancel',
+  required: false
 }
 
-export default compose(
-  withStateHandlers(props => ({ value: props.defaultValue }), {
-    handleChange: (state) => (event) => (
-      { value: event.target.value }
-    )
-  })
+export default withStateHandlers(
+  ({ defaultValue }) => ({ value: defaultValue }),
+  { handleChange: state => event => ({ value: event.target.value }) }
 )(PromptDialog)

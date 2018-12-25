@@ -10,13 +10,19 @@ import Button from '@material-ui/core/Button'
 function AlertDialog (props, context) {
   const { open, onClose, title, message, ok } = props
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose(null)}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog
+      fullWidth
+      open={open}
+      onClose={() => onClose(null)}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-message"
+    >
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        <DialogContentText id="alert-dialog-message">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(null)} color="primary">{ok}</Button>
+        <Button onClick={() => onClose(null)} color="primary" autoFocus>{ok}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -31,9 +37,9 @@ AlertDialog.propTypes = {
 }
 
 AlertDialog.defaultProps = {
-  title: '',
   open: false,
-  ok: 'ok'
+  title: '',
+  ok: 'OK'
 }
 
 export default AlertDialog

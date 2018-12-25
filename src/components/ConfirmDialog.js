@@ -10,14 +10,20 @@ import Button from '@material-ui/core/Button'
 function ConfirmDialog (props, context) {
   const { open, onClose, title, message, ok, cancel } = props
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose(false)}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog
+      fullWidth
+      open={open}
+      onClose={() => onClose(false)}
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby="confirm-dialog-message"
+    >
+      <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        {cancel && <Button onClick={() => onClose(false)} color="primary">{cancel}</Button>}
-        <Button onClick={() => onClose(true)} color="primary">{ok}</Button>
+        <Button onClick={() => onClose(false)} color="primary">{cancel}</Button>
+        <Button onClick={() => onClose(true)} color="primary" autoFocus>{ok}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -33,10 +39,10 @@ ConfirmDialog.propTypes = {
 }
 
 ConfirmDialog.defaultProps = {
-  title: '',
   open: false,
-  ok: 'ok',
-  cancel: 'cancel'
+  title: '',
+  ok: 'OK',
+  cancel: 'Cancel'
 }
 
 export default ConfirmDialog
