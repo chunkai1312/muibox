@@ -10,12 +10,13 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 function PromptDialog (props, context) {
-  const { open, onClose, title, message, ok, cancel, required, defaultValue, value, handleChange } = props
+  const { open, onClose, onExited, title, message, ok, cancel, required, defaultValue, value, handleChange } = props
   return (
     <Dialog
       fullWidth
       open={open}
       onClose={() => onClose(null)}
+      onExited={onExited}
       aria-labelledby="prompt-dialog-title"
       aria-describedby="prompt-dialog-message"
     >
@@ -43,6 +44,7 @@ function PromptDialog (props, context) {
 PromptDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
   ok: PropTypes.string,

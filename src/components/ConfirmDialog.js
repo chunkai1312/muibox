@@ -8,12 +8,13 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Button from '@material-ui/core/Button'
 
 function ConfirmDialog (props, context) {
-  const { open, onClose, title, message, ok, cancel } = props
+  const { open, onClose, onExited, title, message, ok, cancel } = props
   return (
     <Dialog
       fullWidth
       open={open}
       onClose={() => onClose(false)}
+      onExited={onExited}
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-message"
     >
@@ -32,6 +33,7 @@ function ConfirmDialog (props, context) {
 ConfirmDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
   ok: PropTypes.string,

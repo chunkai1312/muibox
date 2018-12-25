@@ -8,12 +8,13 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Button from '@material-ui/core/Button'
 
 function AlertDialog (props, context) {
-  const { open, onClose, title, message, ok } = props
+  const { open, onClose, onExited, title, message, ok } = props
   return (
     <Dialog
       fullWidth
       open={open}
-      onClose={() => onClose(null)}
+      onClose={() => onClose()}
+      onExited={onExited}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-message"
     >
@@ -22,7 +23,7 @@ function AlertDialog (props, context) {
         <DialogContentText id="alert-dialog-message">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(null)} color="primary" autoFocus>{ok}</Button>
+        <Button onClick={() => onClose()} color="primary" autoFocus>{ok}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -31,6 +32,7 @@ function AlertDialog (props, context) {
 AlertDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
   ok: PropTypes.string
