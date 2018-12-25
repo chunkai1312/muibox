@@ -4,18 +4,18 @@
   "description": "Promise-based dialog boxes (alert, confirm, prompt) using Material-UI",
   "main": "lib/index.js",
   "scripts": {
-    "dev": "cd example && npm start",
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "build-storybook": "build-storybook -c .storybook -o docs",
     "prebuild": "rimraf lib",
     "build": "babel src -d lib",
-    "storybook": "start-storybook -p 9001 -c .storybook",
-    "build-storybook": "build-storybook -c .storybook -o docs"
+    "prepublish": "npm run build"
   },
   "files": [
     "lib"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chunkai1312/material-ui-snackbar-redux.git"
+    "url": "git+https://github.com/chunkai1312/muibox.git"
   },
   "keywords": [
     "react",
