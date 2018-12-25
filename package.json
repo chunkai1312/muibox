@@ -1,7 +1,7 @@
 {
   "name": "muibox",
   "version": "0.1.0",
-  "description": "Promise-based dialog boxes using Material-UI",
+  "description": "Promise-based dialog boxes (alert, confirm, prompt) using Material-UI",
   "main": "lib/index.js",
   "scripts": {
     "dev": "cd example && npm start",
@@ -33,6 +33,7 @@
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
     "@material-ui/core": "^3.7.1",
+    "@storybook/addon-actions": "^4.1.3",
     "@storybook/react": "^4.1.3",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",

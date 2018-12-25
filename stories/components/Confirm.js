@@ -12,13 +12,16 @@ const styles = theme => ({
 
 class Confirm extends React.Component {
   handleClick = () => {
-    this.props.dialog.confirm('This is the default confirm!')
+    const { dialog, options } = this.props
+    dialog.confirm(options)
+      .then(() => console.log('clicked ok'))
+      .catch(() => console.log('clicked cancel'))
   }
 
   render () {
     const { classes } = this.props
     return (
-      <Button variant="contained" color="primary" className={classes.button} onClick={this.handleClick}>
+      <Button variant="outlined" color="primary" className={classes.button} onClick={this.handleClick}>
         Open Confirm Dialog
       </Button>
     )
@@ -27,7 +30,15 @@ class Confirm extends React.Component {
 
 Confirm.propTypes = {
   classes: PropTypes.object.isRequired,
-  dialog: PropTypes.object.isRequired
+  dialog: PropTypes.object.isRequired,
+  options: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
 }
 
-export default withDialog(withStyles(styles)(Confirm))
+Confirm.defaultProps = {
+  options: 'This is the default confirm!'
+}
+
+export default withDialog()(withStyles(styles)(Confirm))

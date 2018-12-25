@@ -12,13 +12,15 @@ const styles = theme => ({
 
 class Alert extends React.Component {
   handleClick = () => {
-    this.props.dialog.alert('This is the default alert!')
+    const { dialog, options } = this.props
+    dialog.alert(options)
+      .then(() => console.log('clicked ok'))
   }
 
   render () {
     const { classes } = this.props
     return (
-      <Button variant="contained" color="primary" className={classes.button} onClick={this.handleClick}>
+      <Button variant="outlined" color="primary" className={classes.button} onClick={this.handleClick}>
         Open Alert Dialog
       </Button>
     )
@@ -27,7 +29,15 @@ class Alert extends React.Component {
 
 Alert.propTypes = {
   classes: PropTypes.object.isRequired,
-  dialog: PropTypes.object.isRequired
+  dialog: PropTypes.object.isRequired,
+  options: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
 }
 
-export default withDialog(withStyles(styles)(Alert))
+Alert.defaultProps = {
+  options: 'This is the default alert!'
+}
+
+export default withDialog()(withStyles(styles)(Alert))

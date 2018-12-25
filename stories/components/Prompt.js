@@ -12,13 +12,16 @@ const styles = theme => ({
 
 class Prompt extends React.Component {
   handleClick = () => {
-    this.props.dialog.prompt('This is the default prompt!')
+    const { dialog, options } = this.props
+    dialog.prompt(options)
+      .then((value) => console.log('clicked ok', value))
+      .catch(() => console.log('clicked cancel'))
   }
 
   render () {
     const { classes } = this.props
     return (
-      <Button variant="contained" color="primary" className={classes.button} onClick={this.handleClick}>
+      <Button variant="outlined" color="primary" className={classes.button} onClick={this.handleClick}>
         Open Prompt Dialog
       </Button>
     )
@@ -27,7 +30,15 @@ class Prompt extends React.Component {
 
 Prompt.propTypes = {
   classes: PropTypes.object.isRequired,
-  dialog: PropTypes.object.isRequired
+  dialog: PropTypes.object.isRequired,
+  options: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
 }
 
-export default withDialog(withStyles(styles)(Prompt))
+Prompt.defaultProps = {
+  options: 'This is the default prompt!'
+}
+
+export default withDialog()(withStyles(styles)(Prompt))

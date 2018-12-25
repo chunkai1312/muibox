@@ -1,9 +1,8 @@
 import { configure } from '@storybook/react'
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 
 function loadStories() {
-  require('../stories/alert.js')
-  require('../stories/confirm.js')
-  require('../stories/prompt.js')
+  require('../stories/index.js')
 }
 
 configure(loadStories, module)
