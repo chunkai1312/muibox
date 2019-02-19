@@ -29,18 +29,43 @@ import { DialogProvider } from 'muibox'
 You can then display dialog boxes with the `withDialog` HOC and the injected `dialog` prop in your components.
 
 ```js
+import React from 'react'
 import { withDialog } from 'muibox'
 
-class MyComponent {
-  // *snip*
-
-  handleSomething () {
-    this.props.dialog.alert('Warning!')
+class MyComponent extends React.Component {
+  render () {
+    const { dialog } = this.props
+    return (
+      <div>
+        <button onClick={() => dialog.alert('Warning!')}>
+          Click me
+        </button>
+      </div>
+    )
   }
-
 }
 
-export default withDialog()(MyComponent) // export the wrapped component
+export default withDialog()(MyComponent)
+```
+
+If you use React 16.8+, You can import `useDialog` hook to get `dialog` context directly.
+
+```js
+import React from 'react'
+import { useDialog } from 'muibox'
+
+function MyComponent () {
+  const dialog = useDialog()
+  return (
+    <div>
+      <button onClick={() => dialog.alert('Warning!')}>
+        Click me
+      </button>
+    </div>
+  )
+}
+
+export default MyComponent
 ```
 
 ### Alert
