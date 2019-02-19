@@ -1,6 +1,6 @@
 {
   "name": "muibox",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Promise-based dialog boxes (alert, confirm, prompt) using Material-UI",
   "main": "lib/index.js",
   "scripts": {
