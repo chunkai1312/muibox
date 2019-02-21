@@ -49,14 +49,16 @@
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-standard": "^3.1.0",
-    "prop-types": "^15.6.2",
     "react": "^16.8.2",
-    "react-dom": "^16.8.2",
-    "recompose": "^0.30.0"
+    "react-dom": "^16.8.2"
   },
   "peerDependencies": {
     "@material-ui/core": "^1.0.0 || ^3.0.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.7.2",
+    "recompose": "^0.30.0"
   }
 }
