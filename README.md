@@ -48,7 +48,7 @@ class MyComponent extends React.Component {
 export default withDialog()(MyComponent)
 ```
 
-If you use React 16.8+, You can import `useDialog` hook to get `dialog` context directly.
+If use React 16.8+, you can import `useDialog` hook to get `dialog` context directly.
 
 ```js
 import React from 'react'
