@@ -34,8 +34,8 @@ function PromptDialog (props, context) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(null)} color="primary">{cancel}</Button>
-        <Button onClick={() => onClose(value)} color="primary" disabled={required && !value}>{ok}</Button>
+        <Button onClick={() => onClose(null)} color={cancel.color} variant={cancel.variant}>{cancel.text}</Button>
+        <Button onClick={() => onClose(value)} color={ok.color} variant={ok.variant} disabled={required && !value}>{ok.text}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -47,8 +47,16 @@ PromptDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
-  ok: PropTypes.string,
-  cancel: PropTypes.string,
+  ok: PropTypes.objectOf({
+    text: PropTypes.string,
+    color: PropTypes.string,
+    variant: PropTypes.string
+  }),
+  cancel: PropTypes.objectOf({
+    text: PropTypes.string,
+    color: PropTypes.string,
+    variant: PropTypes.string
+  }),
   required: PropTypes.bool,
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   value: PropTypes.string,
@@ -58,8 +66,16 @@ PromptDialog.propTypes = {
 PromptDialog.defaultProps = {
   open: false,
   title: '',
-  ok: 'OK',
-  cancel: 'Cancel',
+  ok: {
+    text: 'OK',
+    color: 'primary',
+    variant: 'text'
+  },
+  cancel: {
+    text: 'Cancel',
+    color: 'primary',
+    variant: 'text'
+  },
   required: false
 }
 
