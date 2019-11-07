@@ -35,11 +35,11 @@ AlertDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
-  ok: PropTypes.objectOf({
+  ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
     variant: PropTypes.string
-  }),
+  })
 }
 
 AlertDialog.defaultProps = {
