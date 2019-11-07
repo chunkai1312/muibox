@@ -60,7 +60,7 @@ ConfirmDialog.defaultProps = {
     text: 'Cancel',
     color: 'primary',
     variant: 'text'
-  }
+  },
 }
 
 export default ConfirmDialog
