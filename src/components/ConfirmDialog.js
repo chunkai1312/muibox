@@ -36,16 +36,16 @@ ConfirmDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
-  ok: PropTypes.objectOf({
+  ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
     variant: PropTypes.string
   }),
-  cancel: PropTypes.objectOf({
+  cancel: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
     variant: PropTypes.string
-  }),
+  })
 }
 
 ConfirmDialog.defaultProps = {
