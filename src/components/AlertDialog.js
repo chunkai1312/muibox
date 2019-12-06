@@ -20,7 +20,9 @@ function AlertDialog (props, context) {
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-message">{message}</DialogContentText>
+        {typeof message === `string`
+          ? <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
+          : message}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose()} color={ok.color} variant={ok.variant} autoFocus>{ok.text}</Button>

@@ -22,7 +22,9 @@ function PromptDialog (props, context) {
     >
       <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="prompt-dialog-message">{message}</DialogContentText>
+        {typeof message === `string`
+          ? <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
+          : message}
         <TextField
           id="prompt-dialog-text-field"
           onChange={handleChange}

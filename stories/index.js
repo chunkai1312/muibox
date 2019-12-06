@@ -12,6 +12,13 @@ storiesOf('Alert', module)
     const options = { title: 'Alert Dialog', message: 'This is alert dialog message.' }
     return <Alert options={options} />
   })
+  .add('with custom buttons theme', () => {
+    const options = {
+      title: 'Alert Dialog',
+      message: 'This is alert dialog message.'
+    }
+    return <Alert options={options} />
+  })
 
 storiesOf('Confirm', module)
   .addDecorator(story => <DialogProvider>{story()}</DialogProvider>)
