@@ -20,6 +20,23 @@ storiesOf('Confirm', module)
     const options = { title: 'Confirm Dialog', message: 'This is confirm dialog message.' }
     return <Confirm options={options} />
   })
+  .add('changing button color and variant', () => {
+    const options = {
+      title: 'Confirm Dialog',
+      message: 'This is confirm dialog message.',
+      ok: {
+        text: `Yes`,
+        color: `primary`,
+        variant: `contained`
+      },
+      cancel: {
+        text: `No`,
+        color: `secondary`,
+        variant: `outlined`
+      }
+    }
+    return <Confirm options={options} />
+  })
 
 storiesOf('Prompt', module)
   .addDecorator(story => <DialogProvider>{story()}</DialogProvider>)

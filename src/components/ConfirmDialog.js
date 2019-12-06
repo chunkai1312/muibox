@@ -23,8 +23,8 @@ function ConfirmDialog (props, context) {
         <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(false)} color="primary">{cancel}</Button>
-        <Button onClick={() => onClose(true)} color="primary" autoFocus>{ok}</Button>
+        <Button onClick={() => onClose(false)} color={cancel.color} variant={cancel.variant}>{cancel.text}</Button>
+        <Button onClick={() => onClose(true)} color={ok.color} variant={ok.variant} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -36,15 +36,31 @@ ConfirmDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
-  ok: PropTypes.string,
-  cancel: PropTypes.string
+  ok: PropTypes.shape({
+    text: PropTypes.string,
+    color: PropTypes.string,
+    variant: PropTypes.string
+  }),
+  cancel: PropTypes.shape({
+    text: PropTypes.string,
+    color: PropTypes.string,
+    variant: PropTypes.string
+  })
 }
 
 ConfirmDialog.defaultProps = {
   open: false,
   title: '',
-  ok: 'OK',
-  cancel: 'Cancel'
+  ok: {
+    text: 'OK',
+    color: 'primary',
+    variant: 'text'
+  },
+  cancel: {
+    text: 'Cancel',
+    color: 'primary',
+    variant: 'text'
+  },
 }
 
 export default ConfirmDialog

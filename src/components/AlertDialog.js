@@ -23,7 +23,7 @@ function AlertDialog (props, context) {
         <DialogContentText id="alert-dialog-message">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose()} color="primary" autoFocus>{ok}</Button>
+        <Button onClick={() => onClose()} color={ok.color} variant={ok.variant} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -35,13 +35,21 @@ AlertDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
-  ok: PropTypes.string
+  ok: PropTypes.shape({
+    text: PropTypes.string,
+    color: PropTypes.string,
+    variant: PropTypes.string
+  })
 }
 
 AlertDialog.defaultProps = {
   open: false,
   title: '',
-  ok: 'OK'
+  ok: {
+    text: 'OK',
+    color: 'primary',
+    variant: 'text'
+  }
 }
 
 export default AlertDialog
