@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button'
 
 function ConfirmDialog (props, context) {
   const { open, onClose, onExited, title, message, ok, cancel } = props
-  console.log(message)
   return (
     <Dialog
       fullWidth
@@ -63,7 +62,7 @@ ConfirmDialog.defaultProps = {
     text: 'Cancel',
     color: 'primary',
     variant: 'text'
-  },
+  }
 }
 
 export default ConfirmDialog

@@ -1,6 +1,7 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { DialogProvider } from '../src'
+import { Typography } from '@material-ui/core'
 import Alert from './components/Alert'
 import Confirm from './components/Confirm'
 import Prompt from './components/Prompt'
@@ -16,6 +17,13 @@ storiesOf('Alert', module)
     const options = {
       title: 'Alert Dialog',
       message: 'This is alert dialog message.'
+    }
+    return <Alert options={options} />
+  })
+  .add('with custom jsx on message', () => {
+    const options = {
+      title: 'Alert Dialog',
+      message: <Typography color="secondary">This is a Typography Component with color secondary.</Typography>
     }
     return <Alert options={options} />
   })
@@ -41,6 +49,13 @@ storiesOf('Confirm', module)
         color: `secondary`,
         variant: `outlined`
       }
+    }
+    return <Confirm options={options} />
+  })
+  .add('with custom jsx on message', () => {
+    const options = {
+      title: 'Confirm Dialog',
+      message: <Typography color="secondary">This is a Typography Component with color secondary.</Typography>
     }
     return <Confirm options={options} />
   })
