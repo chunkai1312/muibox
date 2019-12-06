@@ -20,7 +20,9 @@ function ConfirmDialog (props, context) {
     >
       <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
+        {typeof message === `string`
+          ? <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
+          : message}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)} color={cancel.color} variant={cancel.variant}>{cancel.text}</Button>
@@ -60,7 +62,7 @@ ConfirmDialog.defaultProps = {
     text: 'Cancel',
     color: 'primary',
     variant: 'text'
-  },
+  }
 }
 
 export default ConfirmDialog

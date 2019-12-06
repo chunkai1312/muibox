@@ -81,7 +81,7 @@ dialog.alert('Warning!')
 
 * `options` (object|string) – The alert dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
-* `options.message` (string) – The dialog message to display.
+* `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
 * `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
 
 ### Confirm
@@ -98,7 +98,7 @@ dialog.confirm('Are you sure?')
 
 * `options` (object|string) – The confirm dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
-* `options.message` (string) – The dialog message to display.
+* `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
 * `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
 * `options.cancel` (object) { text, color, variant } - The negative button text to display, color and variant, following mateiral-ui types. Default `Cancel`, `primary` and `text` respectively.
 
@@ -117,7 +117,7 @@ dialog.prompt('Enter your name:')
 
 * `options` (object|string) – The prompt dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
-* `options.message` (string) – The dialog message to display.
+* `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
 * `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
 * `options.cancel` (object) { text, color, variant } - The negative button text to display, color and variant, following mateiral-ui types. Default `Cancel`, `primary` and `text` respectively.
 * `options.required` (bool) - If `true`, the label is displayed as required and the input will be required. Default `false`.
