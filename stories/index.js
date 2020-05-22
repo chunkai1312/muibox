@@ -2,6 +2,8 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { DialogProvider } from '../src'
 import { Typography } from '@material-ui/core'
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
 import Alert from './components/Alert'
 import Confirm from './components/Confirm'
 import Prompt from './components/Prompt'
@@ -81,6 +83,25 @@ storiesOf('Prompt', module)
       message: 'This is prompt dialog message.',
       defaultValue: 'Bob',
       required: true
+    }
+    return <Prompt options={options} />
+  })
+  .add('with icon buttons', () => {
+    const options = {
+      title: 'Prompt Dialog',
+      message: 'This is prompt dialog message.',
+      defaultValue: 'Bob',
+      required: true,
+      ok: {
+        text: `OK`,
+        color: `primary`,
+        startIcon: <CheckIcon />
+      },
+      cancel: {
+        text: `Cancel`,
+        color: `primary`,
+        startIcon: <CloseIcon />
+      }
     }
     return <Prompt options={options} />
   })
