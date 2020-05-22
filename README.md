@@ -82,7 +82,7 @@ dialog.alert('Warning!')
 * `options` (object|string) – The alert dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
 * `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
-* `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
+* `options.ok` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 
 ### Confirm
 
@@ -99,8 +99,8 @@ dialog.confirm('Are you sure?')
 * `options` (object|string) – The confirm dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
 * `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
-* `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
-* `options.cancel` (object) { text, color, variant } - The negative button text to display, color and variant, following mateiral-ui types. Default `Cancel`, `primary` and `text` respectively.
+* `options.ok` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
+* `options.cancel` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 
 ### Prompt
 
@@ -118,8 +118,8 @@ dialog.prompt('Enter your name:')
 * `options` (object|string) – The prompt dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
 * `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
-* `options.ok` (object) { text, color, variant } - The positive button text to display, color and variant, following mateiral-ui types. Defaults `OK`, `primary` and `text` respectively.
-* `options.cancel` (object) { text, color, variant } - The negative button text to display, color and variant, following mateiral-ui types. Default `Cancel`, `primary` and `text` respectively.
+* `options.ok` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
+* `options.cancel` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 * `options.required` (bool) - If `true`, the label is displayed as required and the input will be required. Default `false`.
 * `options.defaultValue` (string|number) - The default value of the `Input` element.
 
