@@ -25,8 +25,8 @@ function ConfirmDialog (props, context) {
           : message}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(false)} color={cancel.color} variant={cancel.variant}>{cancel.text}</Button>
-        <Button onClick={() => onClose(true)} color={ok.color} variant={ok.variant} autoFocus>{ok.text}</Button>
+        <Button onClick={() => onClose(false)} color={cancel.color} variant={cancel.variant} startIcon={cancel.startIcon} endIcon={cancel.endIcon}>{cancel.text}</Button>
+        <Button onClick={() => onClose(true)} color={ok.color} variant={ok.variant} startIcon={cancel.startIcon} endIcon={cancel.endIcon} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -41,12 +41,16 @@ ConfirmDialog.propTypes = {
   ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
-    variant: PropTypes.string
+    variant: PropTypes.string,
+    startIcon: PropTypes.element,
+    endIcon: PropTypes.element
   }),
   cancel: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
-    variant: PropTypes.string
+    variant: PropTypes.string,
+    startIcon: PropTypes.element,
+    endIcon: PropTypes.element
   })
 }
 
