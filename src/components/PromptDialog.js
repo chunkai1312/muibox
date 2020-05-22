@@ -36,8 +36,8 @@ function PromptDialog (props, context) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(null)} color={cancel.color} variant={cancel.variant}>{cancel.text}</Button>
-        <Button onClick={() => onClose(value)} color={ok.color} variant={ok.variant} disabled={required && !value}>{ok.text}</Button>
+        <Button onClick={() => onClose(null)} color={cancel.color} variant={cancel.variant} startIcon={cancel.startIcon} endIcon={cancel.endIcon}>{cancel.text}</Button>
+        <Button onClick={() => onClose(value)} color={ok.color} variant={ok.variant} disabled={required && !value} startIcon={ok.startIcon} endIcon={ok.endIcon}>{ok.text}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -52,12 +52,16 @@ PromptDialog.propTypes = {
   ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
-    variant: PropTypes.string
+    variant: PropTypes.string,
+    startIcon: PropTypes.element,
+    endIcon: PropTypes.element
   }),
   cancel: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
-    variant: PropTypes.string
+    variant: PropTypes.string,
+    startIcon: PropTypes.element,
+    endIcon: PropTypes.element
   }),
   required: PropTypes.bool,
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
