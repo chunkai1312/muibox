@@ -118,6 +118,7 @@ dialog.prompt('Enter your name:')
 * `options` (object|string) – The prompt dialog settings. If `options` is a string, set dialog message to display.
 * `options.title` (string) – The dialog title to display.
 * `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
+* `options.placeholder` (string) – The placeholder attribute for the input. Default is blank `''`.
 * `options.ok` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 * `options.cancel` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 * `options.required` (bool) - If `true`, the label is displayed as required and the input will be required. Default `false`.
