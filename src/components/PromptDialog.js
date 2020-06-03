@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 function PromptDialog (props, context) {
-  const { open, onClose, onExited, title, message, ok, cancel, required, defaultValue, value, handleChange } = props
+  const { open, onClose, onExited, title, message, placeholder, ok, cancel, required, defaultValue, value, handleChange } = props
   return (
     <Dialog
       fullWidth
@@ -30,6 +30,7 @@ function PromptDialog (props, context) {
           onChange={handleChange}
           defaultValue={defaultValue}
           required
+          placeholder={placeholder}
           margin="dense"
           fullWidth
           autoFocus
@@ -49,6 +50,7 @@ PromptDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
+  placeholder: PropTypes.string,
   ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
@@ -72,6 +74,7 @@ PromptDialog.propTypes = {
 PromptDialog.defaultProps = {
   open: false,
   title: '',
+  placeholder: '',
   ok: {
     text: 'OK',
     color: 'primary',
