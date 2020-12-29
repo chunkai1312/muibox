@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import withStateHandlers from 'recompose/withStateHandlers'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -9,39 +8,51 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
-function PromptDialog (props, context) {
-  const { open, onClose, onExited, title, message, placeholder, ok, cancel, required, defaultValue, value, handleChange } = props
-  return (
-    <Dialog
-      fullWidth
-      open={open}
-      onClose={() => onClose(null)}
-      onExited={onExited}
-      aria-labelledby="prompt-dialog-title"
-      aria-describedby="prompt-dialog-message"
-    >
-      <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
-      <DialogContent>
-        {typeof message === `string`
-          ? <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
-          : message}
-        <TextField
-          id="prompt-dialog-text-field"
-          onChange={handleChange}
-          defaultValue={defaultValue}
-          required
-          placeholder={placeholder}
-          margin="dense"
-          fullWidth
-          autoFocus
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => onClose(null)} color={cancel.color} variant={cancel.variant} startIcon={cancel.startIcon} endIcon={cancel.endIcon}>{cancel.text}</Button>
-        <Button onClick={() => onClose(value)} color={ok.color} variant={ok.variant} disabled={required && !value} startIcon={ok.startIcon} endIcon={ok.endIcon}>{ok.text}</Button>
-      </DialogActions>
-    </Dialog>
-  )
+class PromptDialog extends React.Component {
+  state = {
+    value: this.props.defaultValue
+  }
+
+  handleChange = (event) => {
+    this.setState({ value: event.target.value })
+  }
+
+  render () {
+    const { value } = this.state;
+    const { open, onClose, onExited, title, message, placeholder,ok, cancel, required, defaultValue } = this.props
+
+    return (
+      <Dialog
+        fullWidth
+        open={open}
+        onClose={() => onClose(null)}
+        onExited={onExited}
+        aria-labelledby="prompt-dialog-title"
+        aria-describedby="prompt-dialog-message"
+      >
+        <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
+        <DialogContent>
+          {typeof message === `string`
+            ? <DialogContentText id="confirm-dialog-message">{message}</DialogContentText>
+            : message}
+          <TextField
+            id="prompt-dialog-text-field"
+            onChange={this.handleChange}
+            defaultValue={defaultValue}
+            required
+            placeholder={placeholder}
+            margin="dense"
+            fullWidth
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => onClose(null)} color={cancel.color} variant={cancel.variant} startIcon={cancel.startIcon} endIcon={cancel.endIcon}>{cancel.text}</Button>
+          <Button onClick={() => onClose(value)} color={ok.color} variant={ok.variant} disabled={required && !value} startIcon={ok.startIcon} endIcon={ok.endIcon}>{ok.text}</Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
 }
 
 PromptDialog.propTypes = {
@@ -66,9 +77,7 @@ PromptDialog.propTypes = {
     endIcon: PropTypes.element
   }),
   required: PropTypes.bool,
-  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  value: PropTypes.string,
-  handleChange: PropTypes.func.isRequired
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
 
 PromptDialog.defaultProps = {
@@ -88,7 +97,4 @@ PromptDialog.defaultProps = {
   required: false
 }
 
-export default withStateHandlers(
-  ({ defaultValue }) => ({ value: defaultValue }),
-  { handleChange: state => event => ({ value: event.target.value }) }
-)(PromptDialog)
+export default PromptDialog
