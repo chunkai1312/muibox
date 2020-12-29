@@ -1,6 +1,6 @@
 {
   "name": "muibox",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Promise-based dialog boxes (alert, confirm, prompt) using Material-UI",
   "main": "lib/index.js",
   "scripts": {
@@ -59,7 +59,6 @@
     "react-dom": "^16.3.0"
   },
   "dependencies": {
-    "prop-types": "^15.7.2",
-    "recompose": "^0.30.0"
+    "prop-types": "^15.7.2"
   }
 }
