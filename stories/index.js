@@ -1,14 +1,18 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { DialogProvider } from '../src'
-import { Typography } from '@material-ui/core'
-import CheckIcon from '@material-ui/icons/Check'
-import CloseIcon from '@material-ui/icons/Close'
+import { Typography } from '@mui/material'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 import Alert from './components/Alert'
 import Confirm from './components/Confirm'
 import Prompt from './components/Prompt'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+
+const theme = createTheme()
 
 storiesOf('Alert', module)
+  .addDecorator(story => <ThemeProvider theme={theme}>{story()}</ThemeProvider>)
   .addDecorator(story => <DialogProvider>{story()}</DialogProvider>)
   .add('basic usage', () => <Alert />)
   .add('with title and message', () => {
@@ -31,6 +35,7 @@ storiesOf('Alert', module)
   })
 
 storiesOf('Confirm', module)
+  .addDecorator(story => <ThemeProvider theme={theme}>{story()}</ThemeProvider>)
   .addDecorator(story => <DialogProvider>{story()}</DialogProvider>)
   .add('basic usage', () => <Confirm />)
   .add('with title and message', () => {
@@ -63,6 +68,7 @@ storiesOf('Confirm', module)
   })
 
 storiesOf('Prompt', module)
+  .addDecorator(story => <ThemeProvider theme={theme}>{story()}</ThemeProvider>)
   .addDecorator(story => <DialogProvider>{story()}</DialogProvider>)
   .add('basic usage', () => <Prompt />)
   .add('with title and message', () => {
@@ -92,6 +98,26 @@ storiesOf('Prompt', module)
       message: 'This is prompt dialog message.',
       defaultValue: 'Bob',
       required: true,
+      ok: {
+        text: `OK`,
+        color: `primary`,
+        startIcon: <CheckIcon />
+      },
+      cancel: {
+        text: `Cancel`,
+        color: `primary`,
+        startIcon: <CloseIcon />
+      }
+    }
+    return <Prompt options={options} />
+  })
+  .add('with password type input', () => {
+    const options = {
+      title: 'Prompt Dialog With Password Input',
+      message: 'This is prompt dialog message.',
+      defaultValue: 'Bob',
+      required: true,
+      inputType: 'password',
       ok: {
         text: `OK`,
         color: `primary`,

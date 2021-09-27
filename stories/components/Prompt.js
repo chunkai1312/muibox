@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
+import withStyles from '@mui/styles/withStyles'
+import Button from '@mui/material/Button'
 import { withDialog } from '../../src'
 
 const styles = theme => ({
@@ -41,4 +41,4 @@ Prompt.defaultProps = {
   options: 'This is the default prompt!'
 }
 
-export default withDialog()(withStyles(styles)(Prompt))
+export default withDialog()(withStyles(styles, {withTheme: true})(Prompt))
