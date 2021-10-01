@@ -19,10 +19,15 @@ storiesOf('Alert', module)
     const options = { title: 'Alert Dialog', message: 'This is alert dialog message.' }
     return <Alert options={options} />
   })
-  .add('with custom buttons theme', () => {
+  .add('with custom button', () => {
     const options = {
       title: 'Alert Dialog',
-      message: 'This is alert dialog message.'
+      message: 'This is alert dialog message.',
+      ok: {
+        text: `Yes`,
+        color: `primary`,
+        variant: `contained`
+      },
     }
     return <Alert options={options} />
   })
@@ -42,7 +47,7 @@ storiesOf('Confirm', module)
     const options = { title: 'Confirm Dialog', message: 'This is confirm dialog message.' }
     return <Confirm options={options} />
   })
-  .add('changing button color and variant', () => {
+  .add('with custom buttons', () => {
     const options = {
       title: 'Confirm Dialog',
       message: 'This is confirm dialog message.',
