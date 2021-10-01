@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 class PromptDialog extends React.Component {
   state = {
@@ -18,18 +18,19 @@ class PromptDialog extends React.Component {
   }
 
   render () {
-    const { value } = this.state;
-    const { open, onClose, onExited, title, message, placeholder,ok, cancel, required, defaultValue } = this.props
+    const { value } = this.state
+    const { open, onClose, onExited, title, message, placeholder, ok, cancel, required, defaultValue, inputType } = this.props
 
     return (
       <Dialog
         fullWidth
         open={open}
         onClose={() => onClose(null)}
-        onExited={onExited}
         aria-labelledby="prompt-dialog-title"
         aria-describedby="prompt-dialog-message"
-      >
+        TransitionProps={{
+          onExited
+        }}>
         <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
         <DialogContent>
           {typeof message === `string`
@@ -43,6 +44,7 @@ class PromptDialog extends React.Component {
             placeholder={placeholder}
             margin="dense"
             fullWidth
+            type={inputType}
             autoFocus
           />
         </DialogContent>
@@ -77,6 +79,7 @@ PromptDialog.propTypes = {
     endIcon: PropTypes.element
   }),
   required: PropTypes.bool,
+  inputType: PropTypes.oneOf(['string', 'password']),
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
 

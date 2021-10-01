@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Button from '@material-ui/core/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Button from '@mui/material/Button'
 
 function AlertDialog (props, context) {
   const { open, onClose, onExited, title, message, ok } = props
@@ -14,10 +14,11 @@ function AlertDialog (props, context) {
       fullWidth
       open={open}
       onClose={() => onClose()}
-      onExited={onExited}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-message"
-    >
+      TransitionProps={{
+        onExited
+      }}>
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         {typeof message === `string`
@@ -28,7 +29,7 @@ function AlertDialog (props, context) {
         <Button onClick={() => onClose()} color={ok.color} variant={ok.variant} startIcon={ok.startIcon} endIcon={ok.endIcon} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
 
 AlertDialog.propTypes = {
