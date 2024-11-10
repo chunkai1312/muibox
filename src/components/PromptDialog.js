@@ -19,7 +19,7 @@ class PromptDialog extends React.Component {
 
   render () {
     const { value } = this.state
-    const { open, onClose, onExited, title, message, placeholder, ok, cancel, required, defaultValue, inputType } = this.props
+    const { open, onClose, onExited, title, message, placeholder, ok, cancel, required, defaultValue, inputType, inputProps } = this.props
 
     return (
       <Dialog
@@ -46,6 +46,7 @@ class PromptDialog extends React.Component {
             fullWidth
             type={inputType}
             autoFocus
+            inputProps={inputProps}
           />
         </DialogContent>
         <DialogActions>
@@ -80,7 +81,8 @@ PromptDialog.propTypes = {
   }),
   required: PropTypes.bool,
   inputType: PropTypes.oneOf(['string', 'password']),
-  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  inputProps: PropTypes.object
 }
 
 PromptDialog.defaultProps = {
@@ -97,7 +99,8 @@ PromptDialog.defaultProps = {
     color: 'primary',
     variant: 'text'
   },
-  required: false
+  required: false,
+  inputProps: {}
 }
 
 export default PromptDialog

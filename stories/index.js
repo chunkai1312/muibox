@@ -1,4 +1,4 @@
-import React from 'react'
+//import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { DialogProvider } from '../src'
 import { Typography } from '@mui/material'
@@ -78,6 +78,16 @@ storiesOf('Prompt', module)
   .add('basic usage', () => <Prompt />)
   .add('with title and message', () => {
     const options = { title: 'Prompt Dialog', message: 'This is prompt dialog message.' }
+    return <Prompt options={options} />
+  })
+  .add('with inputProps - maxLength 15', () => {
+    const options ={
+      title: 'Prompt Dialog',
+      message: 'This is prompt dialog message with max length of 15.',
+      inputProps: {
+        maxLength: 15
+      }
+    }
     return <Prompt options={options} />
   })
   .add('with required', () => {

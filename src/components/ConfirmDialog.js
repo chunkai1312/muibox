@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -7,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 
-function ConfirmDialog (props, context) {
+function ConfirmDialog (props, _context) {
   const { open, onClose, onExited, title, message, ok, cancel } = props
   return (
     <Dialog
@@ -30,7 +29,7 @@ function ConfirmDialog (props, context) {
         <Button onClick={() => onClose(true)} color={ok.color} variant={ok.variant} startIcon={ok.startIcon} endIcon={ok.endIcon} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }
 
 ConfirmDialog.propTypes = {

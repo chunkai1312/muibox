@@ -123,6 +123,7 @@ dialog.prompt('Enter your name:')
 * `options.cancel` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 * `options.required` (bool) - If `true`, the label is displayed as required and the input will be required. Default `false`.
 * `options.defaultValue` (string|number) - The default value of the `Input` element.
+* `options.inputProps` (object) - The props for the input html element. For instance, max length. Optional
 
 ## License
 

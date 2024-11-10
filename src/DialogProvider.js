@@ -3,6 +3,7 @@ import AlertDialog from './components/AlertDialog'
 import ConfirmDialog from './components/ConfirmDialog'
 import PromptDialog from './components/PromptDialog'
 import DialogContext from './DialogContext'
+import PropTypes from 'prop-types'
 
 class DialogProvider extends React.PureComponent {
   state = {
@@ -74,6 +75,10 @@ class DialogProvider extends React.PureComponent {
       </DialogContext.Provider>
     )
   }
+}
+
+DialogProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }
 
 export default DialogProvider

@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -7,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 
-function AlertDialog (props, context) {
+function AlertDialog (props, _context) {
   const { open, onClose, onExited, title, message, ok } = props
   return (
     <Dialog
@@ -29,7 +28,7 @@ function AlertDialog (props, context) {
         <Button onClick={() => onClose()} color={ok.color} variant={ok.variant} startIcon={ok.startIcon} endIcon={ok.endIcon} autoFocus>{ok.text}</Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }
 
 AlertDialog.propTypes = {
