@@ -1,4 +1,3 @@
-//import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { DialogProvider } from '../src'
 import { Typography } from '@mui/material'
