@@ -101,6 +101,7 @@ dialog.confirm('Are you sure?')
 * `options.message` (string|jsx) – The dialog message to display or a custom JSX element to be injected on Material-UI DialogContent.
 * `options.ok` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
 * `options.cancel` (object) { text, color, variant, startIcon, endIcon } - The positive button text to display, color, variant and left/right icon (jsx), following mateiral-ui types. Defaults `OK`, `primary`, `text`, undefined, undefined respectively.
+* `options.throwOnCancel` (boolean)  - defaults to `true`,  optional flag to disable old behavior of throwing error when cancel button is clicked and when dialog is dismissed, setting to false would resolve cancel button press with `false` as value and would throw when dialog is dismissed without selection.
 
 ### Prompt
 

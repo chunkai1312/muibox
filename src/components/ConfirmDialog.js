@@ -12,7 +12,7 @@ function ConfirmDialog (props, _context) {
     <Dialog
       fullWidth
       open={open}
-      onClose={() => onClose(false)}
+      onClose={() => onClose()}
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-message"
       TransitionProps={{
@@ -38,6 +38,7 @@ ConfirmDialog.propTypes = {
   onExited: PropTypes.func.isRequired,
   title: PropTypes.string,
   message: PropTypes.node,
+  throwOnCancel: PropTypes.bool,
   ok: PropTypes.shape({
     text: PropTypes.string,
     color: PropTypes.string,
