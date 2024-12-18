@@ -1,3 +1,12 @@
+# Changelog
+
+# [3.1.0](https://github.com/chunkai1312/muibox/compare/v3.0.1...v3.1.0) (2024-12-18)
+
+
+### Features
+
+* allow differentiating between cancel and dismiss actions in confirm dialog ([#22](https://github.com/chunkai1312/muibox/issues/22)) ([31cbb40](https://github.com/chunkai1312/muibox/commit/31cbb40c30ce2192ca0affb2181f7582d60f3142))
+
 ## [3.0.1](https://github.com/chunkai1312/muibox/compare/v3.0.0...v3.0.1) (2024-11-12)
 
 
@@ -116,6 +125,3 @@
 ### Features
 
 * support for alert, confirm and prompt boxes with basic usage ([2cf04a2](https://github.com/chunkai1312/muibox/commit/2cf04a25b68424b8e28e2e90a8e695dc8911ac45))
-
-
-
