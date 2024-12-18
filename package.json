@@ -9,7 +9,8 @@
     "prebuild": "rimraf lib",
     "build": "babel src -d lib",
     "prepublish": "npm run build",
-    "lint": "eslint ./src --ext js,jsx"
+    "lint": "eslint ./src --ext js,jsx",
+    "release": "release-it"
   },
   "files": [
     "lib"
@@ -41,6 +42,7 @@
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "@mui/styles": "^5.16.7",
+    "@release-it/conventional-changelog": "^9.0.3",
     "@storybook/addon-actions": "^4.1.3",
     "@storybook/react": "^4.1.3",
     "babel-loader": "^8.0.4",
@@ -52,6 +54,7 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "release-it": "^17.10.0",
     "rimraf": "^6.0.1"
   },
   "peerDependencies": {
