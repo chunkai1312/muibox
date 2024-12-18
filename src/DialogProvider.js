@@ -20,8 +20,13 @@ class DialogProvider extends React.PureComponent {
 
   handleConfirmDialogClose = (value) => {
     const { confirmDialog } = this.state
+    const { throwOnCancel = true } = confirmDialog
     this.setState({ confirmDialog: { ...confirmDialog, open: false } })
-    return value ? confirmDialog.resolve(value) : confirmDialog.reject()
+    if (throwOnCancel) {
+      return (value) ? confirmDialog.resolve(value) : confirmDialog.reject()
+    } else {
+      return [true, false].includes(value) ? confirmDialog.resolve(value) : confirmDialog.reject()
+    }
   }
 
   handlePromptDialogClose = (value) => {
