@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "storybook": "start-storybook -p 9001 -c .storybook",
-    "build:storybook": "build-storybook -c .storybook -o docs",
+    "storybook": "storybook dev -p 9001 -c .storybook",
+    "build:storybook": "storybook build -c .storybook -o docs",
     "deploy:storybook": "gh-pages -d docs",
     "prebuild": "rimraf lib",
     "build": "tsc",
@@ -39,14 +39,21 @@
     "@babel/plugin-transform-react-jsx": "7.25.9",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.9.0",
+    "@babel/preset-typescript": "^7.27.0",
+    "@chromatic-com/storybook": "3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "@mui/styles": "^5.16.7",
     "@release-it/conventional-changelog": "^9.0.3",
-    "@storybook/addon-actions": "^5.0.1",
-    "@storybook/react": "^5.0.1",
+    "@storybook/addon-actions": "^8.6.12",
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/builder-vite": "^8.6.12",
+    "@storybook/cli": "^8.6.12",
+    "@storybook/core-common": "^8.6.12",
+    "@storybook/react": "^8.6.12",
+    "@storybook/react-vite": "^8.6.12",
     "@types/prop-types": "^15.7.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
@@ -65,7 +72,8 @@
     "release-it": "^17.10.0",
     "rimraf": "^6.0.1",
     "ts-loader": "^8.2.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "vite": "^6.3.1"
   },
   "peerDependencies": {
     "@mui/material": "^5.16.7",
@@ -74,7 +82,8 @@
     "react-dom": "^18.3.1"
   },
   "dependencies": {
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "storybook": "^8.6.12"
   },
   "overrides": {
     "react": "^18.3.1",

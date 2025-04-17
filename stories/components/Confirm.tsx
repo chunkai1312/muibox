@@ -12,7 +12,7 @@ const styles = (theme: Theme) => ({
   },
 });
 
-interface ConfirmComponentProps
+export interface ConfirmComponentProps
   extends WithStyles<typeof styles>,
     WithDialogProps {
   options?: string | ConfirmDialogProps;

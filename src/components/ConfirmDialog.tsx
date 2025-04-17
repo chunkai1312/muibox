@@ -6,7 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import { ConfirmDialogProps } from "../DialogContext";
 
-interface ConfirmProps extends ConfirmDialogProps {
+export interface ConfirmProps extends ConfirmDialogProps {
   open: boolean;
   onClose: (value?: boolean) => void;
   onExited: () => void;

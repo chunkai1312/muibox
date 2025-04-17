@@ -12,7 +12,7 @@ const styles = (theme: Theme) => ({
   },
 });
 
-interface PromptComponentProps
+export interface PromptComponentProps
   extends WithStyles<typeof styles>,
     WithDialogProps {
   options?: string | PromptDialogProps;
