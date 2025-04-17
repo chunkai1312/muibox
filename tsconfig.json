@@ -8,7 +8,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./lib",
-    "rootDir": "./src",
     "strict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -16,6 +15,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "stories/**/*", "**/*.ts"],
   "exclude": ["node_modules", "lib", "stories"]
 }

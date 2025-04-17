@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "storybook": "tsc && start-storybook -p 9001 -c .storybook",
+    "storybook": "start-storybook -p 9001 -c .storybook",
     "build:storybook": "build-storybook -c .storybook -o docs",
     "deploy:storybook": "gh-pages -d docs",
     "prebuild": "rimraf lib",
@@ -45,11 +45,11 @@
     "@mui/material": "^5.16.7",
     "@mui/styles": "^5.16.7",
     "@release-it/conventional-changelog": "^9.0.3",
-    "@storybook/addon-actions": "^4.1.3",
-    "@storybook/react": "^4.1.3",
+    "@storybook/addon-actions": "^5.0.1",
+    "@storybook/react": "^5.0.1",
+    "@types/prop-types": "^15.7.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "@types/prop-types": "^15.7.2",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "babel-loader": "^8.0.4",
@@ -64,6 +64,7 @@
     "react-dom": "^18.3.1",
     "release-it": "^17.10.0",
     "rimraf": "^6.0.1",
+    "ts-loader": "^8.2.0",
     "typescript": "^5.4.3"
   },
   "peerDependencies": {
