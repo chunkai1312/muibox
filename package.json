@@ -1,17 +1,26 @@
 {
   "name": "muibox",
   "version": "3.1.0",
+  "type": "module",
   "description": "Promise-based dialog boxes (alert, confirm, prompt) using Material-UI",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "sideEffects": false,
   "scripts": {
-    "storybook": "storybook dev -p 9001 -c .storybook",
-    "build:storybook": "storybook build -c .storybook -o docs",
+    "storybook": "storybook dev -p 9001",
+    "build:storybook": "storybook build -o docs",
     "deploy:storybook": "gh-pages -d docs",
     "prebuild": "rimraf lib",
-    "build": "tsc",
-    "prepublish": "npm run build",
-    "lint": "eslint ./src --ext ts,tsx",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "bun run build",
+    "lint": "oxlint --type-aware",
     "release": "release-it"
   },
   "files": [
@@ -33,64 +42,30 @@
   "author": "Chun-Kai Wang <chunkai1312@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/eslint-parser": "^7.25.9",
-    "@babel/plugin-transform-react-jsx": "7.25.9",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/preset-react": "^7.9.0",
-    "@babel/preset-typescript": "^7.27.0",
-    "@chromatic-com/storybook": "3",
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^5.16.7",
-    "@mui/material": "^5.16.7",
-    "@mui/styles": "^5.16.7",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
     "@release-it/conventional-changelog": "^9.0.3",
-    "@storybook/addon-actions": "^8.6.12",
-    "@storybook/addon-essentials": "^8.6.12",
-    "@storybook/builder-vite": "^8.6.12",
-    "@storybook/cli": "^8.6.12",
-    "@storybook/core-common": "^8.6.12",
-    "@storybook/react": "^8.6.12",
-    "@storybook/react-vite": "^8.6.12",
-    "@types/prop-types": "^15.7.2",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "babel-loader": "^8.0.4",
-    "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-refresh": "^0.4.6",
-    "gh-pages": "^6.2.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "release-it": "^17.10.0",
-    "rimraf": "^6.0.1",
-    "ts-loader": "^8.2.0",
-    "typescript": "^5.4.3",
-    "vite": "^6.3.1"
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/react-vite": "^10.6.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "gh-pages": "^6.3.0",
+    "oxlint": "^1.82.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "release-it": "^21.0.2",
+    "rimraf": "^6.1.3",
+    "storybook": "^10.6.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
   },
   "peerDependencies": {
-    "@mui/material": "^5.16.7",
-    "@mui/styles": "^5.16.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "dependencies": {
-    "prop-types": "^15.7.2",
-    "storybook": "^8.6.12"
-  },
-  "overrides": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "resolutions": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@mui/material": "^9.4.0",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
   }
 }
