@@ -4,7 +4,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import { AlertDialogProps } from "../DialogContext";
+import type { AlertDialogProps } from "../DialogContext.ts";
 
 interface AlertProps extends AlertDialogProps {
   open: boolean;
@@ -12,7 +12,7 @@ interface AlertProps extends AlertDialogProps {
   onExited: () => void;
 }
 
-function AlertDialog(props: AlertProps): JSX.Element {
+function AlertDialog(props: AlertProps) {
   const { open, onClose, onExited, title, message, ok = {} } = props;
   const {
     text = "OK",
@@ -29,14 +29,12 @@ function AlertDialog(props: AlertProps): JSX.Element {
       onClose={() => onClose()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-message"
-      TransitionProps={{
-        onExited,
-      }}
+      slotProps={{ transition: { onExited } }}
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         {typeof message === "string" ? (
-          <DialogContentText id="confirm-dialog-message">
+          <DialogContentText id="alert-dialog-message">
             {message}
           </DialogContentText>
         ) : (

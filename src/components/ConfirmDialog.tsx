@@ -4,7 +4,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import { ConfirmDialogProps } from "../DialogContext";
+import type { ConfirmDialogProps } from "../DialogContext.ts";
 
 export interface ConfirmProps extends ConfirmDialogProps {
   open: boolean;
@@ -12,7 +12,7 @@ export interface ConfirmProps extends ConfirmDialogProps {
   onExited: () => void;
 }
 
-function ConfirmDialog(props: ConfirmProps): JSX.Element {
+function ConfirmDialog(props: ConfirmProps) {
   const {
     open,
     onClose,
@@ -45,9 +45,7 @@ function ConfirmDialog(props: ConfirmProps): JSX.Element {
       onClose={() => onClose()}
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-message"
-      TransitionProps={{
-        onExited,
-      }}
+      slotProps={{ transition: { onExited } }}
     >
       <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
       <DialogContent>

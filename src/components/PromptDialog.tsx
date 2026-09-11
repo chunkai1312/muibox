@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +6,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { PromptDialogProps } from "../DialogContext";
+import type { ChangeEvent } from "react";
+import type { PromptDialogProps } from "../DialogContext.ts";
 
 interface PromptProps extends PromptDialogProps {
   open: boolean;
@@ -14,126 +15,111 @@ interface PromptProps extends PromptDialogProps {
   onExited: () => void;
 }
 
-interface PromptState {
-  value: string | number | undefined;
-}
+function PromptDialog(props: PromptProps) {
+  const {
+    open,
+    onClose,
+    onExited,
+    title = "",
+    message,
+    placeholder = "",
+    ok = {},
+    cancel = {},
+    required = false,
+    defaultValue,
+    inputType,
+    inputProps = {},
+  } = props;
 
-class PromptDialog extends Component<PromptProps, PromptState> {
-  static defaultProps = {
-    open: false,
-    title: "",
-    placeholder: "",
-    ok: {
-      text: "OK",
-      color: "primary" as const,
-      variant: "text" as const,
-    },
-    cancel: {
-      text: "Cancel",
-      color: "primary" as const,
-      variant: "text" as const,
-    },
-    required: false,
-    inputProps: {},
+  const [value, setValue] = useState<string | number | undefined>(defaultValue);
+
+  const {
+    text: okText = "OK",
+    color: okColor = "primary",
+    variant: okVariant = "text",
+    startIcon: okStartIcon,
+    endIcon: okEndIcon,
+  } = ok;
+
+  const {
+    text: cancelText = "Cancel",
+    color: cancelColor = "primary",
+    variant: cancelVariant = "text",
+    startIcon: cancelStartIcon,
+    endIcon: cancelEndIcon,
+  } = cancel;
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   };
 
-  state = {
-    value: this.props.defaultValue,
+  const handleConfirm = () => {
+    onClose(value ?? "");
   };
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ value: event.target.value });
-  };
-
-  render() {
-    const { value } = this.state;
-    const {
-      open,
-      onClose,
-      onExited,
-      title,
-      message,
-      placeholder,
-      ok = {},
-      cancel = {},
-      required,
-      inputType,
-      inputProps,
-    } = this.props;
-
-    const {
-      text: okText = "OK",
-      color: okColor = "primary",
-      variant: okVariant = "text",
-      startIcon: okStartIcon,
-      endIcon: okEndIcon,
-    } = ok;
-
-    const {
-      text: cancelText = "Cancel",
-      color: cancelColor = "primary",
-      variant: cancelVariant = "text",
-      startIcon: cancelStartIcon,
-      endIcon: cancelEndIcon,
-    } = cancel;
-
-    return (
-      <Dialog
-        fullWidth
-        open={open}
-        onClose={() => onClose(null)}
-        aria-labelledby="prompt-dialog-title"
-        aria-describedby="prompt-dialog-message"
-        TransitionProps={{
-          onExited,
-        }}
-      >
-        <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
-        <DialogContent>
-          {typeof message === "string" ? (
-            <DialogContentText id="confirm-dialog-message">
-              {message}
-            </DialogContentText>
-          ) : (
-            message
-          )}
+  return (
+    <Dialog
+      fullWidth
+      open={open}
+      onClose={() => onClose(null)}
+      aria-labelledby="prompt-dialog-title"
+      aria-describedby="prompt-dialog-message"
+      slotProps={{ transition: { onExited } }}
+    >
+      <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
+      <DialogContent>
+        {typeof message === "string" ? (
+          <DialogContentText id="prompt-dialog-message">
+            {message}
+          </DialogContentText>
+        ) : (
+          message
+        )}
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!required || value) handleConfirm();
+          }}
+        >
           <TextField
             id="prompt-dialog-text-field"
-            onChange={this.handleChange}
-            defaultValue={this.props.defaultValue}
-            required
+            onChange={handleChange}
+            defaultValue={defaultValue}
+            required={required}
             placeholder={placeholder}
             margin="dense"
             fullWidth
-            type={inputType}
+            // `inputType` speaks the public API's vocabulary ("string"), which
+            // is not a valid HTML input type.
+            type={inputType === "password" ? "password" : "text"}
             autoFocus
-            inputProps={inputProps}
+            slotProps={{ htmlInput: inputProps }}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => onClose(null)}
-            color={cancelColor}
-            variant={cancelVariant}
-            startIcon={cancelStartIcon}
-            endIcon={cancelEndIcon}
-          >
-            {cancelText}
-          </Button>
-          <Button
-            onClick={() => onClose(value as string | number)}
-            color={okColor}
-            variant={okVariant}
-            disabled={required && !value}
-            startIcon={okStartIcon}
-            endIcon={okEndIcon}
-          >
-            {okText}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => onClose(null)}
+          color={cancelColor}
+          variant={cancelVariant}
+          startIcon={cancelStartIcon}
+          endIcon={cancelEndIcon}
+        >
+          {cancelText}
+        </Button>
+        <Button
+          onClick={handleConfirm}
+          color={okColor}
+          variant={okVariant}
+          disabled={required && !value}
+          startIcon={okStartIcon}
+          endIcon={okEndIcon}
+        >
+          {okText}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default PromptDialog;
