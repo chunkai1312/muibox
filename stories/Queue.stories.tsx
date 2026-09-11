@@ -5,20 +5,39 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useDialog } from "../src";
 
+function useLog() {
+  const [lines, setLines] = useState<{ id: number; text: string }[]>([]);
+
+  return {
+    lines,
+    reset: () => setLines([]),
+    append: (text: string) =>
+      setLines((current) => [
+        ...current,
+        { id: current.length + Date.now(), text },
+      ]),
+  };
+}
+
+function Log({ lines }: { lines: { id: number; text: string }[] }) {
+  return lines.map((line) => (
+    <Typography key={line.id} variant="body2">
+      {line.text}
+    </Typography>
+  ));
+}
+
 /**
  * Dialogs requested while another one is still open are queued, not dropped.
  * Before queueing, a second request overwrote the first one's state and left
  * its promise forever unsettled — so the log below would simply stop.
  */
-function QueueDemo() {
+function OverlappingDemo() {
   const dialog = useDialog();
-  const [log, setLog] = useState<{ id: number; text: string }[]>([]);
-
-  const append = (text: string) =>
-    setLog((lines) => [...lines, { id: lines.length + Date.now(), text }]);
+  const { lines, reset, append } = useLog();
 
   const fireAll = () => {
-    setLog([]);
+    reset();
 
     // All three are requested synchronously, before any of them is answered.
     dialog
@@ -45,22 +64,65 @@ function QueueDemo() {
       <Typography variant="body2" color="text.secondary">
         Each one should appear in turn, and every promise should settle.
       </Typography>
-      {log.map((line) => (
-        <Typography key={line.id} variant="body2">
-          {line.text}
-        </Typography>
-      ))}
+      <Log lines={lines} />
     </Stack>
   );
 }
 
-const meta: Meta<typeof QueueDemo> = {
+/**
+ * A dialog opened from another dialog's `.then` used to appear and then vanish:
+ * the first dialog's leave transition finished last and cleared every slot,
+ * taking the freshly opened one with it. Each request now owns its own entry,
+ * so the chained dialog survives.
+ */
+function ChainedDemo() {
+  const dialog = useDialog();
+  const { lines, reset, append } = useLog();
+
+  const askThenConfirm = () => {
+    reset();
+
+    dialog
+      .prompt({
+        title: "Step 1",
+        message: "Type an email address.",
+        defaultValue: "someone@example.com",
+        required: true,
+      })
+      .then((email) => {
+        append(`prompt settled: ${email}`);
+        // Opened from the callback, while the prompt is still animating out.
+        return dialog.alert(`Step 2 — you typed: ${email}`);
+      })
+      .then(() => append("chained alert settled"))
+      .catch(() => append("cancelled"));
+  };
+
+  return (
+    <Stack spacing={2} sx={{ m: 2, alignItems: "flex-start" }}>
+      <Button variant="contained" onClick={askThenConfirm}>
+        Open a prompt, then chain an alert
+      </Button>
+      <Typography variant="body2" color="text.secondary">
+        The second dialog must stay on screen, not flash and disappear.
+      </Typography>
+      <Log lines={lines} />
+    </Stack>
+  );
+}
+
+const meta: Meta = {
   title: "Queue",
-  component: QueueDemo,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof QueueDemo>;
+type Story = StoryObj;
 
-export const OverlappingRequests: Story = {};
+export const OverlappingRequests: Story = {
+  render: () => <OverlappingDemo />,
+};
+
+export const ChainedDialogs: Story = {
+  render: () => <ChainedDemo />,
+};
