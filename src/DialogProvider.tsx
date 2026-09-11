@@ -1,207 +1,189 @@
-import { PureComponent, ReactNode } from "react";
-import AlertDialog from "./components/AlertDialog";
-import ConfirmDialog from "./components/ConfirmDialog";
-import PromptDialog from "./components/PromptDialog";
-import DialogContext from "./DialogContext";
+import { useCallback, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import AlertDialog from "./components/AlertDialog.tsx";
+import ConfirmDialog from "./components/ConfirmDialog.tsx";
+import PromptDialog from "./components/PromptDialog.tsx";
+import DialogContext from "./DialogContext.ts";
 import type {
   AlertDialogProps,
   ConfirmDialogProps,
   PromptDialogProps,
-} from "./DialogContext";
+} from "./DialogContext.ts";
 
 interface DialogProviderProps {
   children: ReactNode;
 }
 
-interface DialogState {
-  alertDialog:
-    | (AlertDialogProps & {
-        open: boolean;
-        resolve: (value?: void) => void;
-        reject: () => void;
-      })
-    | null;
-  confirmDialog:
-    | (ConfirmDialogProps & {
-        open: boolean;
-        resolve: (value: boolean) => void;
-        reject: () => void;
-      })
-    | null;
-  promptDialog:
-    | (PromptDialogProps & {
-        open: boolean;
-        resolve: (value: string | number) => void;
-        reject: () => void;
-      })
-    | null;
-}
+type Reject = (reason?: unknown) => void;
 
-class DialogProvider extends PureComponent<DialogProviderProps, DialogState> {
-  state: DialogState = {
-    alertDialog: null,
-    confirmDialog: null,
-    promptDialog: null,
+type AlertRequest = {
+  id: number;
+  type: "alert";
+  props: AlertDialogProps;
+  resolve: () => void;
+  reject: Reject;
+};
+
+type ConfirmRequest = {
+  id: number;
+  type: "confirm";
+  props: ConfirmDialogProps;
+  resolve: (value: boolean) => void;
+  reject: Reject;
+};
+
+type PromptRequest = {
+  id: number;
+  type: "prompt";
+  props: PromptDialogProps;
+  resolve: (value: string | number) => void;
+  reject: Reject;
+};
+
+type DialogRequest = AlertRequest | ConfirmRequest | PromptRequest;
+
+let nextId = 0;
+
+function DialogProvider({ children }: DialogProviderProps) {
+  // Dialogs are queued, never replaced. Each request keeps its own promise
+  // handles, so a second call made while a dialog is still open waits its turn
+  // instead of overwriting the first one and leaving its promise unsettled.
+  const [queue, setQueue] = useState<DialogRequest[]>([]);
+  // Set while the head dialog plays its leave transition; it is dropped from
+  // the queue only after `onExited`, so the next one animates in cleanly.
+  const [closing, setClosing] = useState(false);
+
+  const current = queue[0] ?? null;
+
+  const enqueue = useCallback((request: DialogRequest) => {
+    setQueue((pending) => [...pending, request]);
+  }, []);
+
+  // Starts the leave transition of the head dialog. The promise is settled by
+  // the caller, before this runs.
+  const dismiss = useCallback(() => {
+    setClosing(true);
+  }, []);
+
+  const handleExited = useCallback(() => {
+    setClosing(false);
+    setQueue((pending) => pending.slice(1));
+  }, []);
+
+  const alert = useCallback(
+    (options: string | AlertDialogProps): Promise<void> =>
+      new Promise<void>((resolve, reject) => {
+        enqueue({
+          id: nextId++,
+          type: "alert",
+          // A bare string is shorthand for `{ message }`.
+          props: typeof options === "string" ? { message: options } : options,
+          resolve,
+          reject,
+        });
+      }),
+    [enqueue],
+  );
+
+  const confirm = useCallback(
+    (options: string | ConfirmDialogProps): Promise<boolean> =>
+      new Promise<boolean>((resolve, reject) => {
+        enqueue({
+          id: nextId++,
+          type: "confirm",
+          props: typeof options === "string" ? { message: options } : options,
+          resolve,
+          reject,
+        });
+      }),
+    [enqueue],
+  );
+
+  const prompt = useCallback(
+    (options: string | PromptDialogProps): Promise<string | number> =>
+      new Promise<string | number>((resolve, reject) => {
+        enqueue({
+          id: nextId++,
+          type: "prompt",
+          props: typeof options === "string" ? { message: options } : options,
+          resolve,
+          reject,
+        });
+      }),
+    [enqueue],
+  );
+
+  // Identity must stay stable: consumers read this straight off the context.
+  const dialog = useMemo(
+    () => ({ alert, confirm, prompt }),
+    [alert, confirm, prompt],
+  );
+  const contextValue = useMemo(() => ({ dialog }), [dialog]);
+
+  const handleAlertClose = (request: AlertRequest) => () => {
+    request.resolve();
+    dismiss();
   };
 
-  handleAlertDialogClose = () => {
-    const { alertDialog } = this.state;
-    if (!alertDialog) return;
+  const handleConfirmClose = (request: ConfirmRequest) => (value?: boolean) => {
+    const { throwOnCancel = true } = request.props;
 
-    this.setState({
-      alertDialog: { ...alertDialog, open: false },
-    });
-    return alertDialog.resolve();
-  };
-
-  handleConfirmDialogClose = (value?: boolean) => {
-    const { confirmDialog } = this.state;
-    if (!confirmDialog) return;
-
-    const { throwOnCancel = true } = confirmDialog;
-    this.setState({
-      confirmDialog: { ...confirmDialog, open: false },
-    });
-
-    if (throwOnCancel) {
-      return value ? confirmDialog.resolve(value) : confirmDialog.reject();
+    if (value === true) {
+      request.resolve(true);
+    } else if (value === false && !throwOnCancel) {
+      // Opted out of throwing: an explicit "cancel" is a `false` answer.
+      request.resolve(false);
     } else {
-      return [true, false].includes(value as boolean)
-        ? confirmDialog.resolve(value as boolean)
-        : confirmDialog.reject();
+      // Cancel button with throwOnCancel, or a backdrop/escape dismissal.
+      request.reject();
     }
+
+    dismiss();
   };
 
-  handlePromptDialogClose = (value: string | number | null) => {
-    const { promptDialog } = this.state;
-    if (!promptDialog) return;
+  const handlePromptClose =
+    (request: PromptRequest) => (value: string | number | null) => {
+      if (value === null || value === undefined) {
+        request.reject();
+      } else {
+        request.resolve(value);
+      }
 
-    this.setState({
-      promptDialog: { ...promptDialog, open: false },
-    });
-    return value ? promptDialog.resolve(value) : promptDialog.reject();
-  };
+      dismiss();
+    };
 
-  handleExited = () => {
-    this.setState({
-      alertDialog: null,
-      confirmDialog: null,
-      promptDialog: null,
-    });
-  };
-
-  alert = (options: string | AlertDialogProps): Promise<void> => {
-    return typeof options === "string"
-      ? new Promise((resolve, reject) => {
-          this.setState({
-            alertDialog: {
-              message: options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        })
-      : new Promise((resolve, reject) => {
-          this.setState({
-            alertDialog: {
-              ...options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        });
-  };
-
-  confirm = (options: string | ConfirmDialogProps): Promise<boolean> => {
-    return typeof options === "string"
-      ? new Promise((resolve, reject) => {
-          this.setState({
-            confirmDialog: {
-              message: options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        })
-      : new Promise((resolve, reject) => {
-          this.setState({
-            confirmDialog: {
-              ...options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        });
-  };
-
-  prompt = (options: string | PromptDialogProps): Promise<string | number> => {
-    return typeof options === "string"
-      ? new Promise((resolve, reject) => {
-          this.setState({
-            promptDialog: {
-              message: options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        })
-      : new Promise((resolve, reject) => {
-          this.setState({
-            promptDialog: {
-              ...options,
-              resolve,
-              reject,
-              open: true,
-            },
-          });
-        });
-  };
-
-  dialog = {
-    alert: this.alert,
-    confirm: this.confirm,
-    prompt: this.prompt,
-  };
-
-  render() {
-    const { children } = this.props;
-    const { alertDialog, confirmDialog, promptDialog } = this.state;
-
-    return (
-      <DialogContext.Provider value={{ dialog: this.dialog }}>
-        {children}
-        {alertDialog && (
-          <AlertDialog
-            {...alertDialog}
-            open={alertDialog.open}
-            onClose={this.handleAlertDialogClose}
-            onExited={this.handleExited}
-          />
-        )}
-        {confirmDialog && (
-          <ConfirmDialog
-            {...confirmDialog}
-            open={confirmDialog.open}
-            onClose={this.handleConfirmDialogClose}
-            onExited={this.handleExited}
-          />
-        )}
-        {promptDialog && (
-          <PromptDialog
-            {...promptDialog}
-            open={promptDialog.open}
-            onClose={this.handlePromptDialogClose}
-            onExited={this.handleExited}
-          />
-        )}
-      </DialogContext.Provider>
-    );
-  }
+  return (
+    <DialogContext.Provider value={contextValue}>
+      {children}
+      {current?.type === "alert" && (
+        <AlertDialog
+          key={current.id}
+          {...current.props}
+          open={!closing}
+          onClose={handleAlertClose(current)}
+          onExited={handleExited}
+        />
+      )}
+      {current?.type === "confirm" && (
+        <ConfirmDialog
+          key={current.id}
+          {...current.props}
+          open={!closing}
+          onClose={handleConfirmClose(current)}
+          onExited={handleExited}
+        />
+      )}
+      {current?.type === "prompt" && (
+        <PromptDialog
+          key={current.id}
+          {...current.props}
+          open={!closing}
+          onClose={handlePromptClose(current)}
+          onExited={handleExited}
+        />
+      )}
+    </DialogContext.Provider>
+  );
 }
 
 export default DialogProvider;
