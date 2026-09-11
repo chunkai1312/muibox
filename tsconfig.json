@@ -1,20 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./lib",
     "strict": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    // Relative imports name the real source file (`./Foo.ts`); tsc rewrites the
+    // specifier to `./Foo.js` on emit, which is what native ESM needs to resolve.
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": ["react", "react-dom"]
   },
-  "include": ["src/**/*", "stories/**/*", "**/*.ts"],
-  "exclude": ["node_modules", "lib", "stories"]
+  "include": ["src/**/*", "stories/**/*", ".storybook/**/*"],
+  "exclude": ["node_modules", "lib", "docs"]
 }
