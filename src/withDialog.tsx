@@ -1,19 +1,32 @@
-import { ComponentType } from "react";
-import DialogContext, { DialogContextValue } from "./DialogContext";
+import DialogContext from "./DialogContext.ts";
+import type { ComponentType } from "react";
+import type { DialogContextValue } from "./DialogContext.ts";
 
 export type WithDialogProps = {
   dialog: DialogContextValue["dialog"];
 };
 
 function withDialog() {
-  return function <P extends object>(
-    WrappedComponent: ComponentType<P & WithDialogProps>
-  ) {
-    const ComponentWithDialog = (props: P) => (
+  return function <P extends WithDialogProps>(WrappedComponent: ComponentType<P>) {
+    // `dialog` is injected from context, so it is removed from the props the
+    // caller has to supply — and it is applied last, so it can never be
+    // shadowed by a stray `dialog` prop passed from outside.
+    const ComponentWithDialog = (props: Omit<P, keyof WithDialogProps>) => (
       <DialogContext.Consumer>
-        {({ dialog }) => <WrappedComponent dialog={dialog} {...props} />}
+        {({ dialog }) => (
+          // TypeScript cannot see that `Omit<P, "dialog"> & { dialog }` is P,
+          // so the reassembly needs an assertion. It is sound: `dialog` is
+          // supplied right after the spread.
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+          <WrappedComponent {...(props as P)} dialog={dialog} />
+        )}
       </DialogContext.Consumer>
     );
+
+    ComponentWithDialog.displayName = `withDialog(${
+      WrappedComponent.displayName || WrappedComponent.name || "Component"
+    })`;
+
     return ComponentWithDialog;
   };
 }

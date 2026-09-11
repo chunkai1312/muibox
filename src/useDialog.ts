@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import DialogContext, { DialogContextValue } from "./DialogContext";
+import DialogContext from "./DialogContext.ts";
+import type { DialogContextValue } from "./DialogContext.ts";
 
 function useDialog() {
   const { dialog } = useContext<DialogContextValue>(DialogContext);
