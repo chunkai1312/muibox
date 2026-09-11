@@ -1,40 +1,31 @@
-import React, { Component } from "react";
-import withStyles from "@mui/styles/withStyles";
+import { Component } from "react";
 import Button from "@mui/material/Button";
 import { withDialog } from "../../src";
-import type { Theme } from "@mui/material/styles";
-import type { WithStyles } from "@mui/styles";
 import type { AlertDialogProps, WithDialogProps } from "../../src";
 
-const styles = (theme: Theme) => ({
-  button: {
-    margin: theme.spacing(2),
-  },
-});
-
-interface AlertComponentProps
-  extends WithStyles<typeof styles>,
-    WithDialogProps {
+export interface AlertComponentProps {
   options?: string | AlertDialogProps;
 }
 
-class Alert extends Component<AlertComponentProps> {
+class Alert extends Component<AlertComponentProps & WithDialogProps> {
   static defaultProps = {
     options: "This is the default alert!",
   };
 
   handleClick = () => {
     const { dialog, options } = this.props;
-    dialog.alert(options!).then(() => console.log("clicked ok"));
+    dialog
+      .alert(options!)
+      .then(() => console.log("clicked ok"))
+      .catch(() => console.log("dismissed"));
   };
 
   render() {
-    const { classes } = this.props;
     return (
       <Button
         variant="outlined"
         color="primary"
-        className={classes.button}
+        sx={{ m: 2 }}
         onClick={this.handleClick}
       >
         Open Alert Dialog
@@ -43,4 +34,4 @@ class Alert extends Component<AlertComponentProps> {
   }
 }
 
-export default withDialog()(withStyles(styles, { withTheme: true })(Alert));
+export default withDialog()(Alert);

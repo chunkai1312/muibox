@@ -1,29 +1,12 @@
-// Confirm.stories.tsx
-
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import Confirm from "./components/Confirm"; // ajuste o caminho se necessário
-// ajuste conforme seu projeto
-import { createTheme, Typography } from "@mui/material"; // função que engloba ThemeProvider, DialogProvider, etc
-import { ThemeProvider } from "@mui/material/styles";
-import { ConfirmDialogProps } from "../src";
-import { DialogProvider } from "../src";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Typography } from "@mui/material";
+import Confirm from "./components/Confirm";
 import type { ConfirmComponentProps } from "./components/Confirm";
+import type { ConfirmDialogProps } from "../src";
 
-const theme = createTheme();
-
-const meta: Meta<typeof Confirm> = {
+const meta: Meta<ConfirmComponentProps> = {
   title: "Confirm",
   component: Confirm,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={theme}>
-        <DialogProvider>
-          <Story />
-        </DialogProvider>
-      </ThemeProvider>
-    ),
-  ],
 };
 
 export default meta;

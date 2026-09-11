@@ -1,29 +1,17 @@
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import Alert from "./components/Alert"; // ajuste o caminho conforme necessário
-import { ThemeProvider } from "@mui/material/styles";
-import { DialogProvider } from "../src";
-import { createTheme, Typography } from "@mui/material";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Typography } from "@mui/material";
+import Alert from "./components/Alert";
+import type { AlertComponentProps } from "./components/Alert";
+import type { AlertDialogProps } from "../src";
 
-const theme = createTheme();
-
-const meta: Meta<typeof Alert> = {
+const meta: Meta<AlertComponentProps> = {
   title: "Alert",
   component: Alert,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={theme}>
-        <DialogProvider>
-          <Story />
-        </DialogProvider>
-      </ThemeProvider>
-    ),
-  ],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Alert>;
+type Story = StoryObj<AlertComponentProps>;
 
 export const BasicUsage: Story = {
   render: () => <Alert />,
@@ -31,7 +19,7 @@ export const BasicUsage: Story = {
 
 export const WithTitleAndMessage: Story = {
   render: () => {
-    const options = {
+    const options: AlertDialogProps = {
       title: "Alert Dialog",
       message: "This is alert dialog message.",
     };
@@ -41,7 +29,7 @@ export const WithTitleAndMessage: Story = {
 
 export const WithCustomButton: Story = {
   render: () => {
-    const options = {
+    const options: AlertDialogProps = {
       title: "Alert Dialog",
       message: "This is alert dialog message.",
       ok: {
@@ -56,7 +44,7 @@ export const WithCustomButton: Story = {
 
 export const WithCustomJsxMessage: Story = {
   render: () => {
-    const options = {
+    const options: AlertDialogProps = {
       title: "Alert Dialog",
       message: (
         <Typography color="secondary">

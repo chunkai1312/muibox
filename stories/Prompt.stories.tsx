@@ -1,31 +1,13 @@
-// Confirm.stories.tsx
-
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import Prompt from "./components/Prompt"; // ajuste o caminho se necessário
-// ajuste conforme seu projeto
-import { createTheme, Typography } from "@mui/material"; // função que engloba ThemeProvider, DialogProvider, etc
-import { ThemeProvider } from "@mui/material/styles";
-import { PromptDialogProps } from "../src";
-import { DialogProvider } from "../src";
-import type { PromptComponentProps } from "./components/Prompt";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import Prompt from "./components/Prompt";
+import type { PromptComponentProps } from "./components/Prompt";
+import type { PromptDialogProps } from "../src";
 
-const theme = createTheme();
-
-const meta: Meta<typeof Prompt> = {
+const meta: Meta<PromptComponentProps> = {
   title: "Prompt",
   component: Prompt,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={theme}>
-        <DialogProvider>
-          <Story />
-        </DialogProvider>
-      </ThemeProvider>
-    ),
-  ],
 };
 
 export default meta;
