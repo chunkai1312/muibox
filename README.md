@@ -1,7 +1,10 @@
 # muibox
 
 [![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
+[![Storybook][ci-image]][ci-url]
+[![React][react-image]][react-url]
+[![MUI][mui-image]][mui-url]
+[![Bun][bun-image]][bun-url]
 
 > Promise-based dialog boxes (alert, confirm, prompt) using Material-UI
 
@@ -170,5 +173,17 @@ dialog.dismissAll()
 
 [npm-image]: https://img.shields.io/npm/v/muibox.svg
 [npm-url]: https://npmjs.org/package/muibox
-[travis-image]: https://img.shields.io/travis/chunkai1312/muibox.svg
-[travis-url]: https://travis-ci.org/chunkai1312/muibox
+[ci-image]: https://github.com/chunkai1312/muibox/actions/workflows/storybook.yml/badge.svg
+[ci-url]: https://github.com/chunkai1312/muibox/actions/workflows/storybook.yml
+
+<!-- These three state what this source tree requires. They are written out
+     rather than read from the registry, because a registry badge reports the
+     last published release and would keep advertising the previous peer
+     versions until a new one ships. Bump them alongside package.json. -->
+
+[react-image]: https://img.shields.io/badge/React-18.3%20%7C%2019-61DAFB?logo=react&logoColor=black
+[react-url]: https://react.dev
+[mui-image]: https://img.shields.io/badge/MUI-9-007FFF?logo=mui&logoColor=white
+[mui-url]: https://mui.com
+[bun-image]: https://img.shields.io/badge/Bun-1.4-000000?logo=bun&logoColor=white
+[bun-url]: https://bun.sh
