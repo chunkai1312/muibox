@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useDialog } from "../src";
+import { DialogProvider, useDialog } from "../src";
 
 function useLog() {
   const [lines, setLines] = useState<{ id: number; text: string }[]>([]);
@@ -111,6 +111,95 @@ function ChainedDemo() {
   );
 }
 
+/**
+ * The same three simultaneous requests as `OverlappingRequests`, but with the
+ * provider in `stack` mode: instead of waiting in line they are layered on top
+ * of each other, newest on top, under a single backdrop. Only the topmost is
+ * reachable by keyboard, because every dialog traps focus — the same way nested
+ * modals behave elsewhere.
+ */
+function StackDemo() {
+  const dialog = useDialog();
+  const { lines, reset, append } = useLog();
+
+  const fireAll = () => {
+    reset();
+
+    dialog
+      .alert("Bottom of the stack.")
+      .then(() => append("alert settled"))
+      .catch(() => append("alert dismissed"));
+
+    dialog
+      .confirm("Middle of the stack.")
+      .then((value) => append(`confirm settled: ${value}`))
+      .catch(() => append("confirm cancelled"));
+
+    dialog
+      .prompt("Top of the stack — answer this one first.")
+      .then((value) => append(`prompt settled: ${value}`))
+      .catch(() => append("prompt cancelled"));
+  };
+
+  return (
+    <Stack spacing={2} sx={{ m: 2, alignItems: "flex-start" }}>
+      <Button variant="contained" onClick={fireAll}>
+        Request three dialogs at once
+      </Button>
+      <Typography variant="body2" color="text.secondary">
+        All three are on screen at once, layered newest on top.
+      </Typography>
+      <Log lines={lines} />
+    </Stack>
+  );
+}
+
+/**
+ * `dismissAll` tears down everything open and everything still waiting, in one
+ * call, rejecting each promise the way a cancel would. The log shows that none
+ * is left unanswered — which is the point: a dropped request would be a promise
+ * nobody ever settles.
+ */
+function DismissAllDemo() {
+  const dialog = useDialog();
+  const { lines, reset, append } = useLog();
+
+  const fireAll = () => {
+    reset();
+
+    dialog
+      .alert("One.")
+      .then(() => append("alert settled"))
+      .catch(() => append("alert rejected"));
+
+    dialog
+      .confirm("Two.")
+      .then((value) => append(`confirm settled: ${value}`))
+      .catch(() => append("confirm rejected"));
+
+    dialog
+      .prompt("Three.")
+      .then((value) => append(`prompt settled: ${value}`))
+      .catch(() => append("prompt rejected"));
+
+    // Give the dialogs a moment on screen before clearing them, so the effect
+    // is visible rather than instantaneous.
+    setTimeout(() => dialog.dismissAll(), 2000);
+  };
+
+  return (
+    <Stack spacing={2} sx={{ m: 2, alignItems: "flex-start" }}>
+      <Button variant="contained" onClick={fireAll}>
+        Request three, then dismiss all after 2s
+      </Button>
+      <Typography variant="body2" color="text.secondary">
+        All three promises should reject — none left hanging.
+      </Typography>
+      <Log lines={lines} />
+    </Stack>
+  );
+}
+
 const meta: Meta = {
   title: "Queue",
 };
@@ -125,4 +214,38 @@ export const OverlappingRequests: Story = {
 
 export const ChainedDialogs: Story = {
   render: () => <ChainedDemo />,
+};
+
+export const StackedDialogs: Story = {
+  // Overrides the queue-mode provider that preview.tsx installs globally.
+  render: () => (
+    <DialogProvider mode="stack">
+      <StackDemo />
+    </DialogProvider>
+  ),
+};
+
+/**
+ * The opt-out: one backdrop per dialog instead of the default single one.
+ * Compare against `StackedDialogs` — depth reads more clearly here, but the
+ * page darkens once per layer and gets murky fast past two or three.
+ */
+export const StackedLayeredBackdrops: Story = {
+  render: () => (
+    <DialogProvider mode="stack" backdrop="each">
+      <StackDemo />
+    </DialogProvider>
+  ),
+};
+
+export const DismissAll: Story = {
+  render: () => <DismissAllDemo />,
+};
+
+export const DismissAllStacked: Story = {
+  render: () => (
+    <DialogProvider mode="stack">
+      <DismissAllDemo />
+    </DialogProvider>
+  ),
 };

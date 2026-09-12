@@ -13,6 +13,7 @@ interface PromptProps extends PromptDialogProps {
   open: boolean;
   onClose: (value: string | number | null) => void;
   onExited: () => void;
+  hideBackdrop?: boolean;
 }
 
 function PromptDialog(props: PromptProps) {
@@ -20,6 +21,7 @@ function PromptDialog(props: PromptProps) {
     open,
     onClose,
     onExited,
+    hideBackdrop,
     title = "",
     message,
     placeholder = "",
@@ -62,6 +64,7 @@ function PromptDialog(props: PromptProps) {
       fullWidth
       open={open}
       onClose={() => onClose(null)}
+      hideBackdrop={hideBackdrop}
       aria-labelledby="prompt-dialog-title"
       aria-describedby="prompt-dialog-message"
       slotProps={{ transition: { onExited } }}

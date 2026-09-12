@@ -10,6 +10,7 @@ export interface ConfirmProps extends ConfirmDialogProps {
   open: boolean;
   onClose: (value?: boolean) => void;
   onExited: () => void;
+  hideBackdrop?: boolean;
 }
 
 function ConfirmDialog(props: ConfirmProps) {
@@ -17,6 +18,7 @@ function ConfirmDialog(props: ConfirmProps) {
     open,
     onClose,
     onExited,
+    hideBackdrop,
     title,
     message,
     ok = {},
@@ -43,6 +45,7 @@ function ConfirmDialog(props: ConfirmProps) {
       fullWidth
       open={open}
       onClose={() => onClose()}
+      hideBackdrop={hideBackdrop}
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-message"
       slotProps={{ transition: { onExited } }}

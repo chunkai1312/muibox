@@ -10,10 +10,11 @@ interface AlertProps extends AlertDialogProps {
   open: boolean;
   onClose: () => void;
   onExited: () => void;
+  hideBackdrop?: boolean;
 }
 
 function AlertDialog(props: AlertProps) {
-  const { open, onClose, onExited, title, message, ok = {} } = props;
+  const { open, onClose, onExited, hideBackdrop, title, message, ok = {} } = props;
   const {
     text = "OK",
     color = "primary",
@@ -27,6 +28,7 @@ function AlertDialog(props: AlertProps) {
       fullWidth
       open={open}
       onClose={() => onClose()}
+      hideBackdrop={hideBackdrop}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-message"
       slotProps={{ transition: { onExited } }}

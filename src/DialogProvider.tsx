@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AlertDialog from "./components/AlertDialog.tsx";
 import ConfirmDialog from "./components/ConfirmDialog.tsx";
@@ -10,30 +10,62 @@ import type {
   PromptDialogProps,
 } from "./DialogContext.ts";
 
+/**
+ * How simultaneous dialog requests are presented.
+ *
+ * - `queue` shows one at a time, in request order; the next one opens once the
+ *   current is answered.
+ * - `stack` shows them layered on top of each other, newest on top, the way
+ *   nested modals behave in most UIs. Only the topmost one is reachable by
+ *   keyboard, since each dialog traps focus.
+ *
+ * Either way no request is dropped and every promise settles.
+ */
+export type DialogMode = "queue" | "stack";
+
+/**
+ * How backdrops are drawn in `stack` mode, where several dialogs are on screen
+ * at once.
+ *
+ * - `topmost` (default) draws a single backdrop, behind the top dialog only, so
+ *   the dimming stays constant however deep the stack goes.
+ * - `each` gives every dialog its own. Depth reads more clearly, at the cost of
+ *   the page getting very dark past two or three.
+ *
+ * Ignored in `queue` mode, where only one dialog is ever mounted.
+ */
+export type BackdropMode = "each" | "topmost";
+
 interface DialogProviderProps {
   children: ReactNode;
+  mode?: DialogMode;
+  backdrop?: BackdropMode;
 }
 
 type Reject = (reason?: unknown) => void;
 
-type AlertRequest = {
+type RequestBase = {
   id: number;
+  // Flipped to false to play the leave transition; the entry is removed from
+  // state only after `onExited`.
+  open: boolean;
+};
+
+type AlertRequest = RequestBase & {
   type: "alert";
   props: AlertDialogProps;
   resolve: () => void;
   reject: Reject;
 };
 
-type ConfirmRequest = {
-  id: number;
+type ConfirmRequest = RequestBase & {
   type: "confirm";
   props: ConfirmDialogProps;
   resolve: (value: boolean) => void;
   reject: Reject;
 };
 
-type PromptRequest = {
-  id: number;
+type PromptRequest = RequestBase & {
   type: "prompt";
   props: PromptDialogProps;
   resolve: (value: string | number) => void;
@@ -44,37 +76,48 @@ type DialogRequest = AlertRequest | ConfirmRequest | PromptRequest;
 
 let nextId = 0;
 
-function DialogProvider({ children }: DialogProviderProps) {
-  // Dialogs are queued, never replaced. Each request keeps its own promise
-  // handles, so a second call made while a dialog is still open waits its turn
-  // instead of overwriting the first one and leaving its promise unsettled.
-  const [queue, setQueue] = useState<DialogRequest[]>([]);
-  // Set while the head dialog plays its leave transition; it is dropped from
-  // the queue only after `onExited`, so the next one animates in cleanly.
-  const [closing, setClosing] = useState(false);
-
-  const current = queue[0] ?? null;
+function DialogProvider({
+  children,
+  mode = "queue",
+  backdrop = "topmost",
+}: DialogProviderProps) {
+  // Requests are kept, never replaced. Each one holds its own promise handles,
+  // so a second call made while a dialog is still open waits its turn instead
+  // of overwriting the first and leaving its promise unsettled.
+  const [requests, setRequests] = useState<DialogRequest[]>([]);
 
   const enqueue = useCallback((request: DialogRequest) => {
-    setQueue((pending) => [...pending, request]);
+    setRequests((pending) => [...pending, request]);
   }, []);
 
-  // Starts the leave transition of the head dialog. The promise is settled by
-  // the caller, before this runs.
-  const dismiss = useCallback(() => {
-    setClosing(true);
+  // Starts the leave transition. The promise is settled by the caller, before
+  // this runs.
+  const dismiss = useCallback((id: number) => {
+    setRequests((pending) =>
+      pending.map((request) =>
+        request.id === id ? { ...request, open: false } : request,
+      ),
+    );
   }, []);
 
-  const handleExited = useCallback(() => {
-    setClosing(false);
-    setQueue((pending) => pending.slice(1));
+  const forget = useCallback((id: number) => {
+    setRequests((pending) => pending.filter((request) => request.id !== id));
   }, []);
+
+  // Mirrors `requests` so dismissAll can read them without the state updater
+  // having to reject promises, which would be a side effect inside a function
+  // React is free to call twice.
+  const requestsRef = useRef(requests);
+  useEffect(() => {
+    requestsRef.current = requests;
+  }, [requests]);
 
   const alert = useCallback(
     (options: string | AlertDialogProps): Promise<void> =>
       new Promise<void>((resolve, reject) => {
         enqueue({
           id: nextId++,
+          open: true,
           type: "alert",
           // A bare string is shorthand for `{ message }`.
           props: typeof options === "string" ? { message: options } : options,
@@ -90,6 +133,7 @@ function DialogProvider({ children }: DialogProviderProps) {
       new Promise<boolean>((resolve, reject) => {
         enqueue({
           id: nextId++,
+          open: true,
           type: "confirm",
           props: typeof options === "string" ? { message: options } : options,
           resolve,
@@ -104,6 +148,7 @@ function DialogProvider({ children }: DialogProviderProps) {
       new Promise<string | number>((resolve, reject) => {
         enqueue({
           id: nextId++,
+          open: true,
           type: "prompt",
           props: typeof options === "string" ? { message: options } : options,
           resolve,
@@ -113,16 +158,32 @@ function DialogProvider({ children }: DialogProviderProps) {
     [enqueue],
   );
 
+  const dismissAll = useCallback(() => {
+    const pending = requestsRef.current;
+    pending.forEach((request) => request.reject());
+
+    // Only mounted dialogs can play a leave transition and report `onExited`.
+    // The ones still waiting their turn are never mounted, so they are dropped
+    // outright — leaving them in state would strand them closed and unanswered.
+    const mounted = mode === "stack" ? pending.length : Math.min(1, pending.length);
+    // The spread is deliberate: these are state objects, and mutating them in
+    // place would break React's change detection.
+    setRequests(
+      // oxlint-disable-next-line oxc/no-map-spread
+      pending.slice(0, mounted).map((request) => ({ ...request, open: false })),
+    );
+  }, [mode]);
+
   // Identity must stay stable: consumers read this straight off the context.
   const dialog = useMemo(
-    () => ({ alert, confirm, prompt }),
-    [alert, confirm, prompt],
+    () => ({ alert, confirm, prompt, dismissAll }),
+    [alert, confirm, prompt, dismissAll],
   );
   const contextValue = useMemo(() => ({ dialog }), [dialog]);
 
   const handleAlertClose = (request: AlertRequest) => () => {
     request.resolve();
-    dismiss();
+    dismiss(request.id);
   };
 
   const handleConfirmClose = (request: ConfirmRequest) => (value?: boolean) => {
@@ -138,7 +199,7 @@ function DialogProvider({ children }: DialogProviderProps) {
       request.reject();
     }
 
-    dismiss();
+    dismiss(request.id);
   };
 
   const handlePromptClose =
@@ -149,39 +210,69 @@ function DialogProvider({ children }: DialogProviderProps) {
         request.resolve(value);
       }
 
-      dismiss();
+      dismiss(request.id);
     };
+
+  // In queue mode only the head is mounted, so the next one enters cleanly once
+  // the current has finished leaving. In stack mode they are all mounted at
+  // once and MUI layers them in mount order.
+  const visible = mode === "stack" ? requests : requests.slice(0, 1);
+
+  // With one backdrop per dialog the dimming compounds, so `topmost` keeps only
+  // the last one's. Anything still leaving is skipped, so the remaining backdrop
+  // never belongs to a dialog on its way out.
+  const backdropOwner = visible.findLast((request) => request.open)?.id;
+  const hideBackdropFor = (request: DialogRequest) =>
+    backdrop === "topmost" && request.id !== backdropOwner;
+
+  const render = (request: DialogRequest) => {
+    switch (request.type) {
+      case "alert":
+        return (
+          <AlertDialog
+            key={request.id}
+            {...request.props}
+            open={request.open}
+            onClose={handleAlertClose(request)}
+            onExited={() => forget(request.id)}
+            hideBackdrop={hideBackdropFor(request)}
+          />
+        );
+      case "confirm":
+        return (
+          <ConfirmDialog
+            key={request.id}
+            {...request.props}
+            open={request.open}
+            onClose={handleConfirmClose(request)}
+            onExited={() => forget(request.id)}
+            hideBackdrop={hideBackdropFor(request)}
+          />
+        );
+      case "prompt":
+        return (
+          <PromptDialog
+            key={request.id}
+            {...request.props}
+            open={request.open}
+            onClose={handlePromptClose(request)}
+            onExited={() => forget(request.id)}
+            hideBackdrop={hideBackdropFor(request)}
+          />
+        );
+      default: {
+        // Unreachable, and a compile error the day a new dialog type is added
+        // without a branch here.
+        const exhaustive: never = request;
+        return exhaustive;
+      }
+    }
+  };
 
   return (
     <DialogContext.Provider value={contextValue}>
       {children}
-      {current?.type === "alert" && (
-        <AlertDialog
-          key={current.id}
-          {...current.props}
-          open={!closing}
-          onClose={handleAlertClose(current)}
-          onExited={handleExited}
-        />
-      )}
-      {current?.type === "confirm" && (
-        <ConfirmDialog
-          key={current.id}
-          {...current.props}
-          open={!closing}
-          onClose={handleConfirmClose(current)}
-          onExited={handleExited}
-        />
-      )}
-      {current?.type === "prompt" && (
-        <PromptDialog
-          key={current.id}
-          {...current.props}
-          open={!closing}
-          onClose={handlePromptClose(current)}
-          onExited={handleExited}
-        />
-      )}
+      {visible.map(render)}
     </DialogContext.Provider>
   );
 }

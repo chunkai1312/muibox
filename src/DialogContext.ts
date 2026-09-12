@@ -5,6 +5,13 @@ export interface DialogContextValue {
     alert: (options: string | AlertDialogProps) => Promise<void>;
     confirm: (options: string | ConfirmDialogProps) => Promise<boolean>;
     prompt: (options: string | PromptDialogProps) => Promise<string | number>;
+    /**
+     * Closes every open and pending dialog at once, rejecting each of their
+     * promises the same way a cancel or a backdrop click would. Useful on a
+     * route change, a logout, or anywhere the context behind the dialogs is
+     * about to stop being valid.
+     */
+    dismissAll: () => void;
   };
 }
 
@@ -54,6 +61,7 @@ const DialogContext = createContext<DialogContextValue>({
     alert: () => Promise.resolve(),
     confirm: () => Promise.resolve(false),
     prompt: () => Promise.resolve(""),
+    dismissAll: () => {},
   },
 });
 
