@@ -1,3 +1,10 @@
+# Superseded by .github/workflows/storybook.yml, which builds and publishes the
+# same docs/ output. Kept for reference.
+#
+# Travis itself still exists, at travis-ci.com; what was retired is the
+# travis-ci.org platform this project was set up on, which now redirects there.
+# Reviving this file would mean moving the project to the .com account and its
+# credit allowance for open source.
 language: node_js
 node_js:
   - '24'
