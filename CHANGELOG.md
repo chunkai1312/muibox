@@ -1,5 +1,13 @@
 # Changelog
 
+# [4.0.0](https://github.com/chunkai1312/muibox/compare/v3.1.0...v4.0.0) (2026-09-13)
+
+* feat!: modernize muibox and fix dialog lifecycle (#23) ([8c87c94](https://github.com/chunkai1312/muibox/commit/8c87c94beac72e01a4deb3a45e83f4b486a7be0b)), closes [#23](https://github.com/chunkai1312/muibox/issues/23)
+
+### BREAKING CHANGES
+
+* React 18.3+, MUI 9.4+, and TypeScript 5+ are required.
+
 # [3.1.0](https://github.com/chunkai1312/muibox/compare/v3.0.1...v3.1.0) (2024-12-18)
 
 
