@@ -5,18 +5,12 @@ on:
     branches: [master]
   pull_request:
 
-# Lets the deploy job publish to Pages using the workflow's own identity,
-# instead of a personal token pushing to a gh-pages branch.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# A superseded run has nothing worth finishing, but let an in-flight deploy
-# land rather than leaving Pages half-updated.
 concurrency:
   group: storybook-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
   verify:
@@ -26,7 +20,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.0
 
       - run: bun install --frozen-lockfile
 
@@ -34,11 +28,14 @@ jobs:
 
       - run: bun run typecheck
 
+      - run: bun run test
+
       - run: bun run build
 
       - run: bun run build:storybook
 
       - uses: actions/upload-pages-artifact@v5
+        if: github.ref == 'refs/heads/master'
         with:
           path: docs
 
@@ -47,6 +44,9 @@ jobs:
     if: github.ref == 'refs/heads/master'
     needs: verify
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -13,11 +13,17 @@
 ## Install
 
 ```
-$ npm install muibox --save
+npm install muibox @mui/material @emotion/react @emotion/styled react react-dom
 ```
 
-`@mui/material` and `react` are peer dependencies, so install them alongside:
-`@mui/material` 9, and `react`/`react-dom` 18.3 or 19.
+`muibox` supports `@mui/material` 9 and `react`/`react-dom` 18.3 or 19.
+The command above installs Emotion, MUI's default styling engine, as well.
+
+When using React 18, also follow MUI's
+[React 18 compatibility setup](https://mui.com/material-ui/getting-started/installation/#react-18-and-below)
+so `react-is` resolves to the same version as React.
+
+TypeScript consumers should use TypeScript 5 or newer.
 
 ## Usage
 
