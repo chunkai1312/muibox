@@ -1,10 +1,14 @@
 import { useContext } from "react";
-import DialogContext from "./DialogContext.ts";
-import type { DialogContextValue } from "./DialogContext.ts";
+import DialogContext from "./DialogContext.js";
 
 function useDialog() {
-  const { dialog } = useContext<DialogContextValue>(DialogContext);
-  return dialog;
+  const context = useContext(DialogContext);
+
+  if (context === null) {
+    throw new Error("muibox: useDialog must be used within a DialogProvider");
+  }
+
+  return context.dialog;
 }
 
 export default useDialog;

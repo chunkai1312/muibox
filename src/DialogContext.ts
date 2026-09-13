@@ -1,4 +1,6 @@
 import { createContext } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
+import type { ButtonProps as MuiButtonProps } from "@mui/material/Button";
 
 export interface DialogContextValue {
   dialog: {
@@ -17,23 +19,15 @@ export interface DialogContextValue {
 
 export interface ButtonProps {
   text?: string;
-  color?:
-    | "inherit"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "error"
-    | "info"
-    | "warning";
-  variant?: "text" | "outlined" | "contained";
-  startIcon?: React.ReactElement;
-  endIcon?: React.ReactElement;
+  color?: MuiButtonProps["color"];
+  variant?: MuiButtonProps["variant"];
+  startIcon?: MuiButtonProps["startIcon"];
+  endIcon?: MuiButtonProps["endIcon"];
 }
 
 export interface BaseDialogProps {
-  open?: boolean;
   title?: string;
-  message?: React.ReactNode;
+  message?: ReactNode;
 }
 
 export interface AlertDialogProps extends BaseDialogProps {
@@ -53,16 +47,9 @@ export interface PromptDialogProps extends BaseDialogProps {
   required?: boolean;
   defaultValue?: string | number;
   inputType?: "string" | "password";
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
 }
 
-const DialogContext = createContext<DialogContextValue>({
-  dialog: {
-    alert: () => Promise.resolve(),
-    confirm: () => Promise.resolve(false),
-    prompt: () => Promise.resolve(""),
-    dismissAll: () => {},
-  },
-});
+const DialogContext = createContext<DialogContextValue | null>(null);
 
 export default DialogContext;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import type { ChangeEvent } from "react";
-import type { PromptDialogProps } from "../DialogContext.ts";
+import type { PromptDialogProps } from "../DialogContext.js";
 
 interface PromptProps extends PromptDialogProps {
   open: boolean;
@@ -34,6 +34,12 @@ function PromptDialog(props: PromptProps) {
   } = props;
 
   const [value, setValue] = useState<string | number | undefined>(defaultValue);
+  const titleId = useId();
+  const messageId = useId();
+  const inputId = useId();
+  const hasMessage =
+    message !== null && message !== undefined && typeof message !== "boolean";
+  const hasValue = value !== undefined && value !== "";
 
   const {
     text: okText = "OK",
@@ -65,27 +71,29 @@ function PromptDialog(props: PromptProps) {
       open={open}
       onClose={() => onClose(null)}
       hideBackdrop={hideBackdrop}
-      aria-labelledby="prompt-dialog-title"
-      aria-describedby="prompt-dialog-message"
+      aria-labelledby={titleId}
+      aria-describedby={hasMessage ? messageId : undefined}
       slotProps={{ transition: { onExited } }}
     >
-      <DialogTitle id="prompt-dialog-title">{title}</DialogTitle>
+      <DialogTitle id={titleId}>{title}</DialogTitle>
       <DialogContent>
         {typeof message === "string" ? (
-          <DialogContentText id="prompt-dialog-message">
+          <DialogContentText id={messageId}>
             {message}
           </DialogContentText>
+        ) : hasMessage ? (
+          <div id={messageId}>{message}</div>
         ) : (
-          message
+          null
         )}
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            if (!required || value) handleConfirm();
+            if (!required || hasValue) handleConfirm();
           }}
         >
           <TextField
-            id="prompt-dialog-text-field"
+            id={inputId}
             onChange={handleChange}
             defaultValue={defaultValue}
             required={required}
@@ -114,7 +122,7 @@ function PromptDialog(props: PromptProps) {
           onClick={handleConfirm}
           color={okColor}
           variant={okVariant}
-          disabled={required && !value}
+          disabled={required && !hasValue}
           startIcon={okStartIcon}
           endIcon={okEndIcon}
         >

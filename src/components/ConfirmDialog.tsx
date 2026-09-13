@@ -1,10 +1,11 @@
+import { useId } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import type { ConfirmDialogProps } from "../DialogContext.ts";
+import type { ConfirmDialogProps } from "../DialogContext.js";
 
 export interface ConfirmProps extends ConfirmDialogProps {
   open: boolean;
@@ -24,6 +25,10 @@ function ConfirmDialog(props: ConfirmProps) {
     ok = {},
     cancel = {},
   } = props;
+  const titleId = useId();
+  const messageId = useId();
+  const hasMessage =
+    message !== null && message !== undefined && typeof message !== "boolean";
   const {
     text: okText = "OK",
     color: okColor = "primary",
@@ -46,18 +51,20 @@ function ConfirmDialog(props: ConfirmProps) {
       open={open}
       onClose={() => onClose()}
       hideBackdrop={hideBackdrop}
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-message"
+      aria-labelledby={titleId}
+      aria-describedby={hasMessage ? messageId : undefined}
       slotProps={{ transition: { onExited } }}
     >
-      <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
+      <DialogTitle id={titleId}>{title}</DialogTitle>
       <DialogContent>
         {typeof message === "string" ? (
-          <DialogContentText id="confirm-dialog-message">
+          <DialogContentText id={messageId}>
             {message}
           </DialogContentText>
+        ) : hasMessage ? (
+          <div id={messageId}>{message}</div>
         ) : (
-          message
+          null
         )}
       </DialogContent>
       <DialogActions>

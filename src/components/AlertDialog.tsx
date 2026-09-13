@@ -1,10 +1,11 @@
+import { useId } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import type { AlertDialogProps } from "../DialogContext.ts";
+import type { AlertDialogProps } from "../DialogContext.js";
 
 interface AlertProps extends AlertDialogProps {
   open: boolean;
@@ -15,6 +16,10 @@ interface AlertProps extends AlertDialogProps {
 
 function AlertDialog(props: AlertProps) {
   const { open, onClose, onExited, hideBackdrop, title, message, ok = {} } = props;
+  const titleId = useId();
+  const messageId = useId();
+  const hasMessage =
+    message !== null && message !== undefined && typeof message !== "boolean";
   const {
     text = "OK",
     color = "primary",
@@ -29,18 +34,20 @@ function AlertDialog(props: AlertProps) {
       open={open}
       onClose={() => onClose()}
       hideBackdrop={hideBackdrop}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-message"
+      aria-labelledby={titleId}
+      aria-describedby={hasMessage ? messageId : undefined}
       slotProps={{ transition: { onExited } }}
     >
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogTitle id={titleId}>{title}</DialogTitle>
       <DialogContent>
         {typeof message === "string" ? (
-          <DialogContentText id="alert-dialog-message">
+          <DialogContentText id={messageId}>
             {message}
           </DialogContentText>
+        ) : hasMessage ? (
+          <div id={messageId}>{message}</div>
         ) : (
-          message
+          null
         )}
       </DialogContent>
       <DialogActions>

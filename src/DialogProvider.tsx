@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import AlertDialog from "./components/AlertDialog.tsx";
-import ConfirmDialog from "./components/ConfirmDialog.tsx";
-import PromptDialog from "./components/PromptDialog.tsx";
-import DialogContext from "./DialogContext.ts";
+import AlertDialog from "./components/AlertDialog.js";
+import ConfirmDialog from "./components/ConfirmDialog.js";
+import PromptDialog from "./components/PromptDialog.js";
+import DialogContext from "./DialogContext.js";
 import type {
   AlertDialogProps,
   ConfirmDialogProps,
   PromptDialogProps,
-} from "./DialogContext.ts";
+} from "./DialogContext.js";
 
 /**
  * How simultaneous dialog requests are presented.
@@ -88,13 +88,27 @@ function DialogProvider({
   // may batch state updates, so an effect-backed mirror can be stale when a
   // caller enqueues a request and calls `dismissAll` in the same tick.
   const requestsRef = useRef<DialogRequest[]>([]);
+  const activeRef = useRef(true);
   const [requests, setRequests] = useState<DialogRequest[]>([]);
+
+  useEffect(() => {
+    activeRef.current = true;
+
+    return () => {
+      activeRef.current = false;
+      const pending = requestsRef.current;
+      requestsRef.current = [];
+      pending.forEach((request) =>
+        request.reject(new Error("muibox: DialogProvider was unmounted")),
+      );
+    };
+  }, []);
 
   const updateRequests = useCallback(
     (update: (pending: DialogRequest[]) => DialogRequest[]) => {
       const next = update(requestsRef.current);
       requestsRef.current = next;
-      setRequests(next);
+      if (activeRef.current) setRequests(next);
     },
     [],
   );
@@ -169,17 +183,11 @@ function DialogProvider({
     const pending = requestsRef.current;
     pending.forEach((request) => request.reject());
 
-    // Only mounted dialogs can play a leave transition and report `onExited`.
-    // The ones still waiting their turn are never mounted, so they are dropped
-    // outright — leaving them in state would strand them closed and unanswered.
-    const mounted = mode === "stack" ? pending.length : Math.min(1, pending.length);
-    // The spread is deliberate: these are state objects, and mutating them in
-    // place would break React's change detection.
-    updateRequests(() =>
-      // oxlint-disable-next-line oxc/no-map-spread
-      pending.slice(0, mounted).map((request) => ({ ...request, open: false })),
-    );
-  }, [mode, updateRequests]);
+    // Remove the entries atomically. If enqueue and dismissAll happen in the
+    // same React batch, a dialog may never have mounted; marking that request
+    // closed would leave it at the head forever because onExited cannot fire.
+    updateRequests(() => []);
+  }, [updateRequests]);
 
   // Identity must stay stable: consumers read this straight off the context.
   const dialog = useMemo(
@@ -228,7 +236,13 @@ function DialogProvider({
   // With one backdrop per dialog the dimming compounds, so `topmost` keeps only
   // the last one's. Anything still leaving is skipped, so the remaining backdrop
   // never belongs to a dialog on its way out.
-  const backdropOwner = visible.findLast((request) => request.open)?.id;
+  let backdropOwner: number | undefined;
+  for (let index = visible.length - 1; index >= 0; index -= 1) {
+    if (visible[index].open) {
+      backdropOwner = visible[index].id;
+      break;
+    }
+  }
   const hideBackdropFor = (request: DialogRequest) =>
     backdrop === "topmost" && request.id !== backdropOwner;
 

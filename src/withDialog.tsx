@@ -1,6 +1,6 @@
-import DialogContext from "./DialogContext.ts";
+import DialogContext from "./DialogContext.js";
 import type { ComponentType } from "react";
-import type { DialogContextValue } from "./DialogContext.ts";
+import type { DialogContextValue } from "./DialogContext.js";
 
 export type WithDialogProps = {
   dialog: DialogContextValue["dialog"];
@@ -13,13 +13,21 @@ function withDialog() {
     // shadowed by a stray `dialog` prop passed from outside.
     const ComponentWithDialog = (props: Omit<P, keyof WithDialogProps>) => (
       <DialogContext.Consumer>
-        {({ dialog }) => (
-          // TypeScript cannot see that `Omit<P, "dialog"> & { dialog }` is P,
-          // so the reassembly needs an assertion. It is sound: `dialog` is
-          // supplied right after the spread.
-          // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-          <WrappedComponent {...(props as P)} dialog={dialog} />
-        )}
+        {(context) => {
+          if (context === null) {
+            throw new Error(
+              "muibox: withDialog components must be used within a DialogProvider",
+            );
+          }
+
+          return (
+            // TypeScript cannot see that `Omit<P, "dialog"> & { dialog }` is P,
+            // so the reassembly needs an assertion. It is sound: `dialog` is
+            // supplied right after the spread.
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            <WrappedComponent {...(props as P)} dialog={context.dialog} />
+          );
+        }}
       </DialogContext.Consumer>
     );
 
