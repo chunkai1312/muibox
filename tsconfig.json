@@ -10,10 +10,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "verbatimModuleSyntax": true,
-    // Relative imports name the real source file (`./Foo.ts`); tsc rewrites the
-    // specifier to `./Foo.js` on emit, which is what native ESM needs to resolve.
-    "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
@@ -21,6 +17,12 @@
     "noEmit": true,
     "types": ["react", "react-dom"]
   },
-  "include": ["src/**/*", "stories/**/*", ".storybook/**/*"],
+  "include": [
+    "src/**/*",
+    "stories/**/*",
+    "tests/**/*",
+    ".storybook/**/*",
+    "vitest.config.ts"
+  ],
   "exclude": ["node_modules", "lib", "docs"]
 }
