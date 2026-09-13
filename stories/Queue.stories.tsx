@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { expect, userEvent, within } from "storybook/test";
 import { DialogProvider, useDialog } from "../src";
 
 function useLog() {
@@ -200,6 +201,42 @@ function DismissAllDemo() {
   );
 }
 
+/**
+ * An enqueue followed by `dismissAll` in the same tick must still reject the
+ * new promise. An effect-backed request mirror used to miss it, remove the
+ * dialog, and leave the promise pending forever.
+ */
+function ImmediateDismissAllDemo() {
+  const dialog = useDialog();
+  const [result, setResult] = useState("idle");
+
+  const run = () => {
+    setResult("pending");
+
+    dialog
+      .alert("This request should be rejected immediately.")
+      .then(() => setResult("resolved"))
+      .catch(() => setResult("rejected"));
+
+    dialog.dismissAll();
+
+    setTimeout(() => {
+      setResult((current) =>
+        current === "pending" ? "still pending — bug" : current,
+      );
+    }, 250);
+  };
+
+  return (
+    <Stack spacing={2} sx={{ m: 2, alignItems: "flex-start" }}>
+      <Button variant="contained" onClick={run}>
+        Request one, then dismiss all immediately
+      </Button>
+      <Typography variant="body2">Result: {result}</Typography>
+    </Stack>
+  );
+}
+
 const meta: Meta = {
   title: "Queue",
 };
@@ -240,6 +277,23 @@ export const StackedLayeredBackdrops: Story = {
 
 export const DismissAll: Story = {
   render: () => <DismissAllDemo />,
+};
+
+export const ImmediateDismissAll: Story = {
+  render: () => <ImmediateDismissAllDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Request one, then dismiss all immediately",
+      }),
+    );
+
+    await expect(
+      await canvas.findByText("Result: rejected"),
+    ).toBeInTheDocument();
+  },
 };
 
 export const DismissAllStacked: Story = {

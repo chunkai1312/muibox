@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AlertDialog from "./components/AlertDialog.tsx";
 import ConfirmDialog from "./components/ConfirmDialog.tsx";
@@ -84,33 +84,40 @@ function DialogProvider({
   // Requests are kept, never replaced. Each one holds its own promise handles,
   // so a second call made while a dialog is still open waits its turn instead
   // of overwriting the first and leaving its promise unsettled.
+  // Keep the imperative API and the rendered state in sync immediately. React
+  // may batch state updates, so an effect-backed mirror can be stale when a
+  // caller enqueues a request and calls `dismissAll` in the same tick.
+  const requestsRef = useRef<DialogRequest[]>([]);
   const [requests, setRequests] = useState<DialogRequest[]>([]);
 
+  const updateRequests = useCallback(
+    (update: (pending: DialogRequest[]) => DialogRequest[]) => {
+      const next = update(requestsRef.current);
+      requestsRef.current = next;
+      setRequests(next);
+    },
+    [],
+  );
+
   const enqueue = useCallback((request: DialogRequest) => {
-    setRequests((pending) => [...pending, request]);
-  }, []);
+    updateRequests((pending) => [...pending, request]);
+  }, [updateRequests]);
 
   // Starts the leave transition. The promise is settled by the caller, before
   // this runs.
   const dismiss = useCallback((id: number) => {
-    setRequests((pending) =>
+    updateRequests((pending) =>
       pending.map((request) =>
         request.id === id ? { ...request, open: false } : request,
       ),
     );
-  }, []);
+  }, [updateRequests]);
 
   const forget = useCallback((id: number) => {
-    setRequests((pending) => pending.filter((request) => request.id !== id));
-  }, []);
-
-  // Mirrors `requests` so dismissAll can read them without the state updater
-  // having to reject promises, which would be a side effect inside a function
-  // React is free to call twice.
-  const requestsRef = useRef(requests);
-  useEffect(() => {
-    requestsRef.current = requests;
-  }, [requests]);
+    updateRequests((pending) =>
+      pending.filter((request) => request.id !== id),
+    );
+  }, [updateRequests]);
 
   const alert = useCallback(
     (options: string | AlertDialogProps): Promise<void> =>
@@ -168,11 +175,11 @@ function DialogProvider({
     const mounted = mode === "stack" ? pending.length : Math.min(1, pending.length);
     // The spread is deliberate: these are state objects, and mutating them in
     // place would break React's change detection.
-    setRequests(
+    updateRequests(() =>
       // oxlint-disable-next-line oxc/no-map-spread
       pending.slice(0, mounted).map((request) => ({ ...request, open: false })),
     );
-  }, [mode]);
+  }, [mode, updateRequests]);
 
   // Identity must stay stable: consumers read this straight off the context.
   const dialog = useMemo(
